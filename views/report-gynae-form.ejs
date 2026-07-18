@@ -2,64 +2,168 @@
 
 <div class="page-head">
   <div>
-    <span class="eyebrow">Patient #<%= patient.id %> · <%= patient.name %></span>
-    <h1><%= editing ? 'Edit gynaecological ultrasound report' : 'Gynaecological ultrasound report' %></h1>
-    <p>Pre-filled with the normal-report template. Edit only what's abnormal for this patient.</p>
+    <span class="eyebrow">Patient #<%= patient.id %> · <%= patient.name %> · Gynae Case</span>
+    <h1><%= editing ? 'Edit gynaecological ultrasound report' : 'Gynaecological ultrasound — organ findings' %></h1>
+    <p>Each organ opens with the normal-report template already filled in. Adjust the structured findings and the description updates itself — you can also edit the description text directly before saving.</p>
   </div>
 </div>
 
-<div class="card card-pad">
-  <form method="post" action="<%= editing ? `/reports/gynae/${reportId}/edit` : `/patients/${patient.id}/report/gynae` %>">
-    <div class="field">
-      <label for="uterus">Uterus</label>
-      <textarea id="uterus" name="uterus" rows="2"><%= data.uterus || '' %></textarea>
-    </div>
-    <div class="form-grid">
-      <div class="field">
-        <label for="adnexa_l">Left adnexa</label>
-        <textarea id="adnexa_l" name="adnexa_l" rows="2"><%= data.adnexa_l || '' %></textarea>
-      </div>
-      <div class="field">
-        <label for="adnexa_r">Right adnexa</label>
-        <textarea id="adnexa_r" name="adnexa_r" rows="2"><%= data.adnexa_r || '' %></textarea>
-      </div>
-    </div>
-    <div class="form-grid">
-      <div class="field">
-        <label for="ovary_l">Left ovary</label>
-        <textarea id="ovary_l" name="ovary_l" rows="2"><%= data.ovary_l || '' %></textarea>
-      </div>
-      <div class="field">
-        <label for="ovary_r">Right ovary</label>
-        <textarea id="ovary_r" name="ovary_r" rows="2"><%= data.ovary_r || '' %></textarea>
-      </div>
-    </div>
-    <div class="field">
-      <label for="pouch_douglas">Pouch of Douglas</label>
-      <textarea id="pouch_douglas" name="pouch_douglas" rows="2"><%= data.pouch_douglas || '' %></textarea>
-    </div>
-    <div class="field">
-      <label for="remarks">Remarks / impression</label>
-      <textarea id="remarks" name="remarks" rows="2"><%= data.remarks || '' %></textarea>
-    </div>
+<form method="post" action="<%= editing ? `/reports/gynae/${reportId}/edit` : `/patients/${patient.id}/report/gynae` %>" id="gynaeForm">
 
-    <div class="section-label">Sign-off</div>
-    <div class="form-grid">
-      <div class="field">
-        <label for="sonographer">Sonographer</label>
-        <input type="text" id="sonographer" name="sonographer" value="<%= data.sonographer || currentUser.full_name %>">
+<!-- ============ UTERUS ============ -->
+<details class="organ" open data-organ="uterus">
+  <summary>Uterus</summary>
+  <div class="organ-body">
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Size</h5>
+        <div class="radio-row"><input type="radio" name="ut_size" value="normal" checked> <label>Normal</label></div>
+        <div class="radio-row"><input type="radio" name="ut_size" value="small"> <label>Small</label></div>
+        <div class="radio-row"><input type="radio" name="ut_size" value="enlarged"> <label>Enlarged</label></div>
       </div>
-      <div class="field">
-        <label for="radiologist">Reporting radiologist</label>
-        <input type="text" id="radiologist" name="radiologist" placeholder="Dr. …" value="<%= data.radiologist || '' %>">
+      <div class="finding-group">
+        <h5>Position</h5>
+        <div class="radio-row"><input type="radio" name="ut_position" value="anteverted" checked> <label>Anteverted</label></div>
+        <div class="radio-row"><input type="radio" name="ut_position" value="retroverted"> <label>Retroverted</label></div>
+        <div class="radio-row"><input type="radio" name="ut_position" value="straight"> <label>Straight</label></div>
+      </div>
+      <div class="finding-group">
+        <h5>Shape</h5>
+        <div class="radio-row"><input type="radio" name="ut_shape" value="normal" checked> <label>Normal</label></div>
+        <div class="radio-row"><input type="radio" name="ut_shape" value="abnormal"> <label>Abnormal</label></div>
       </div>
     </div>
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Endometrium</h5>
+        <div class="radio-row"><input type="radio" name="ut_endo" value="normal" checked> <label>Normal</label></div>
+        <div class="radio-row"><input type="radio" name="ut_endo" value="thickened"> <label>Thickened</label></div>
+        <div class="sub-inputs">
+          <select name="ut_endo_cause">
+            <option value="endometriosis">endometriosis</option><option value="endometritis">endometritis</option>
+            <option value="p.o.cs">P.O.Cs</option><option value="missed abortion">missed abortion</option>
+            <option value="early pregnancy">early pregnancy</option>
+          </select>
+        </div>
+      </div>
+      <div class="finding-group">
+        <h5>Mass</h5>
+        <div class="radio-row"><input type="radio" name="ut_mass" value="none" checked> <label>None</label></div>
+        <div class="radio-row"><input type="radio" name="ut_mass" value="yes"> <label>Present</label></div>
+        <div class="sub-inputs">
+          <select name="ut_mass_type"><option value="cystic">cystic</option><option value="solid">solid</option></select>
+          <select name="ut_mass_location"><option value="fundal">fundal</option><option value="anterior">anterior</option><option value="posterior">posterior</option><option value="near internal os">near internal os</option></select>
+        </div>
+        <div class="sub-inputs">
+          <input type="number" name="ut_mass_w" placeholder="w" style="width:50px;">×<input type="number" name="ut_mass_h" placeholder="h" style="width:50px;"><span>mm</span>
+        </div>
+      </div>
+    </div>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="uterus" id="out_uterus" rows="3"><%= data.uterus || '' %></textarea>
+    </div>
+  </div>
+</details>
 
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary"><%= editing ? 'Save changes' : 'Save & generate report' %></button>
-      <a href="<%= editing ? `/reports/gynae/${reportId}/print` : `/patients/${patient.id}` %>" class="btn btn-outline">Cancel</a>
+<!-- ============ RIGHT ADNEXA ============ -->
+<details class="organ" data-organ="radnexa">
+  <summary>Right adnexa</summary>
+  <div class="organ-body">
+    <%- include('partials/adnexa-fields', { prefix: 'ra' }) %>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="adnexa_r" id="out_radnexa" rows="2"><%= data.adnexa_r || '' %></textarea>
     </div>
-  </form>
+  </div>
+</details>
+
+<!-- ============ LEFT ADNEXA ============ -->
+<details class="organ" data-organ="ladnexa">
+  <summary>Left adnexa</summary>
+  <div class="organ-body">
+    <%- include('partials/adnexa-fields', { prefix: 'la' }) %>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="adnexa_l" id="out_ladnexa" rows="2"><%= data.adnexa_l || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<!-- ============ RIGHT OVARY ============ -->
+<details class="organ" data-organ="rovary">
+  <summary>Right ovary</summary>
+  <div class="organ-body">
+    <%- include('partials/ovary-fields', { prefix: 'ro' }) %>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="ovary_r" id="out_rovary" rows="2"><%= data.ovary_r || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<!-- ============ LEFT OVARY ============ -->
+<details class="organ" data-organ="lovary">
+  <summary>Left ovary</summary>
+  <div class="organ-body">
+    <%- include('partials/ovary-fields', { prefix: 'lo' }) %>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="ovary_l" id="out_lovary" rows="2"><%= data.ovary_l || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<!-- ============ POUCH OF DOUGLAS ============ -->
+<details class="organ" data-organ="pod">
+  <summary>Pouch of Douglas</summary>
+  <div class="organ-body">
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Size</h5>
+        <div class="radio-row"><input type="radio" name="pod_size" value="normal" checked> <label>Normal</label></div>
+        <div class="radio-row"><input type="radio" name="pod_size" value="abnormal"> <label>Abnormal</label></div>
+        <div class="sub-inputs">
+          <select name="pod_amount"><option value="small">small amounts</option><option value="enormous">enormous amounts</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="pouch_douglas" id="out_pod" rows="2"><%= data.pouch_douglas || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<!-- ============ REMARKS ============ -->
+<details class="organ" open data-organ="remarks">
+  <summary>Remarks / overall impression</summary>
+  <div class="organ-body">
+    <div class="field" style="margin-bottom:0;">
+      <textarea name="remarks" id="out_remarks" rows="2"><%= data.remarks || (editing ? '' : 'Normal') %></textarea>
+    </div>
+  </div>
+</details>
+
+<div class="section-label">Sign-off</div>
+<div class="card card-pad" style="margin-bottom:24px;">
+  <div class="form-grid">
+    <div class="field">
+      <label for="sonographer">Sonographer</label>
+      <input type="text" id="sonographer" name="sonographer" value="<%= data.sonographer || currentUser.full_name %>">
+    </div>
+    <div class="field">
+      <label for="radiologist">Reporting radiologist</label>
+      <input type="text" id="radiologist" name="radiologist" placeholder="Dr. …" value="<%= data.radiologist || '' %>">
+    </div>
+  </div>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary"><%= editing ? 'Save changes' : 'Save & generate report' %></button>
+    <a href="<%= editing ? `/reports/gynae/${reportId}/print` : `/patients/${patient.id}` %>" class="btn btn-outline">Cancel</a>
+  </div>
 </div>
+</form>
+
+<script src="/js/gynae-report.js"></script>
 
 <%- include('partials/footer') %>

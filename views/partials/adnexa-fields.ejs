@@ -1,0 +1,25 @@
+<div class="finding-grid">
+  <div class="finding-group">
+    <h5>Adnexa</h5>
+    <div class="radio-row"><input type="radio" name="<%= prefix %>_status" value="normal" checked> <label>Normal</label></div>
+    <div class="radio-row"><input type="radio" name="<%= prefix %>_status" value="abnormal"> <label>Abnormal</label></div>
+  </div>
+  <div class="finding-group">
+    <h5>Tubo-ovarian mass</h5>
+    <div class="radio-row"><input type="radio" name="<%= prefix %>_mass" value="none" checked> <label>None</label></div>
+    <div class="radio-row"><input type="radio" name="<%= prefix %>_mass" value="yes"> <label>Present</label></div>
+    <div class="sub-inputs">
+      <select name="<%= prefix %>_mass_type">
+        <option value="cystic">cystic</option><option value="solid">solid</option><option value="mixed">mixed echogenic</option>
+        <option value="sludge">slugged debris</option><option value="septas">septas</option><option value="simple">simple cyst</option>
+      </select>
+    </div>
+    <div class="sub-inputs">
+      <select name="<%= prefix %>_mass_pattern"><option value="">—</option><option value="solid>cystic">solid &gt; cystic</option><option value="cystic>solid">cystic &gt; solid</option></select>
+      <select name="<%= prefix %>_margins"><option value="smooth">smooth margins</option><option value="irregular">irregular margins</option></select>
+    </div>
+    <div class="sub-inputs">
+      <input type="number" name="<%= prefix %>_mass_w" placeholder="w" style="width:50px;">×<input type="number" name="<%= prefix %>_mass_h" placeholder="h" style="width:50px;"><span>mm</span>
+    </div>
+  </div>
+</div>

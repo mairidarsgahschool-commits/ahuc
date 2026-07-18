@@ -2,70 +2,237 @@
 
 <div class="page-head">
   <div>
-    <span class="eyebrow">Patient #<%= patient.id %> · <%= patient.name %></span>
-    <h1><%= editing ? 'Edit obstetric ultrasound report' : 'Obstetric ultrasound report' %></h1>
-    <p>Pre-filled with the normal-report template. Edit only what's abnormal for this patient.</p>
+    <span class="eyebrow">Patient #<%= patient.id %> · <%= patient.name %> · Obs Case</span>
+    <h1><%= editing ? 'Edit obstetric ultrasound report' : 'Obstetric ultrasound — findings' %></h1>
+    <p>Each section opens with the normal-report template already filled in. Adjust the structured findings and the description updates itself — you can also edit the description text directly before saving.</p>
   </div>
 </div>
 
-<div class="card card-pad">
-  <form method="post" action="<%= editing ? `/reports/obs/${reportId}/edit` : `/patients/${patient.id}/report/obs` %>">
-    <div class="field">
-      <label for="gestation">Gestation</label>
-      <textarea id="gestation" name="gestation" rows="2"><%= data.gestation || '' %></textarea>
-    </div>
-    <div class="field">
-      <label for="amniotic_fluid">Amniotic fluid</label>
-      <textarea id="amniotic_fluid" name="amniotic_fluid" rows="2"><%= data.amniotic_fluid || '' %></textarea>
-    </div>
-    <div class="field">
-      <label for="placenta">Placenta</label>
-      <textarea id="placenta" name="placenta" rows="2"><%= data.placenta || '' %></textarea>
-    </div>
-    <div class="field">
-      <label for="cvs">Fetal cardiovascular system</label>
-      <textarea id="cvs" name="cvs" rows="2"><%= data.cvs || '' %></textarea>
-    </div>
-    <div class="field">
-      <label for="lie">Lie / presentation</label>
-      <textarea id="lie" name="lie" rows="2"><%= data.lie || '' %></textarea>
-    </div>
-    <div class="field">
-      <label for="fetal_morphology">Fetal morphology</label>
-      <textarea id="fetal_morphology" name="fetal_morphology" rows="3"><%= data.fetal_morphology || '' %></textarea>
-    </div>
-    <div class="form-grid">
-      <div class="field">
-        <label for="biometry">Biometry</label>
-        <textarea id="biometry" name="biometry" rows="2"><%= data.biometry || '' %></textarea>
-      </div>
-      <div class="field">
-        <label for="edd">Estimated date of delivery</label>
-        <input type="date" id="edd" name="edd" value="<%= data.edd || '' %>">
-      </div>
-    </div>
-    <div class="field">
-      <label for="remarks">Remarks / impression</label>
-      <textarea id="remarks" name="remarks" rows="2"><%= data.remarks || '' %></textarea>
-    </div>
+<form method="post" action="<%= editing ? `/reports/obs/${reportId}/edit` : `/patients/${patient.id}/report/obs` %>" id="obsForm">
 
-    <div class="section-label">Sign-off</div>
-    <div class="form-grid">
-      <div class="field">
-        <label for="sonographer">Sonographer</label>
-        <input type="text" id="sonographer" name="sonographer" value="<%= data.sonographer || currentUser.full_name %>">
+<!-- ============ GESTATION ============ -->
+<details class="organ" open data-organ="gestation">
+  <summary>Gestation</summary>
+  <div class="organ-body">
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Number of fetuses</h5>
+        <div class="radio-row"><input type="radio" name="ges_fetus" value="single" checked> <label>Single</label></div>
+        <div class="radio-row"><input type="radio" name="ges_fetus" value="twin"> <label>Twin</label></div>
+        <div class="radio-row"><input type="radio" name="ges_fetus" value="triplet"> <label>Triplet</label></div>
       </div>
-      <div class="field">
-        <label for="radiologist">Reporting radiologist</label>
-        <input type="text" id="radiologist" name="radiologist" placeholder="Dr. …" value="<%= data.radiologist || '' %>">
+      <div class="finding-group">
+        <h5>Distress</h5>
+        <div class="radio-row"><input type="radio" name="ges_distress" value="alive" checked> <label>Alive</label></div>
+        <div class="radio-row"><input type="radio" name="ges_distress" value="distress"> <label>In distress</label></div>
+        <div class="radio-row"><input type="radio" name="ges_distress" value="dead"> <label>Dead</label></div>
       </div>
     </div>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="gestation" id="out_gestation" rows="2"><%= data.gestation || '' %></textarea>
+    </div>
+  </div>
+</details>
 
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary"><%= editing ? 'Save changes' : 'Save & generate report' %></button>
-      <a href="<%= editing ? `/reports/obs/${reportId}/print` : `/patients/${patient.id}` %>" class="btn btn-outline">Cancel</a>
+<!-- ============ AMNIOTIC FLUID ============ -->
+<details class="organ" data-organ="amniotic">
+  <summary>Amniotic fluid</summary>
+  <div class="organ-body">
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Quantity</h5>
+        <div class="radio-row"><input type="radio" name="af_qty" value="moderate" checked> <label>Moderate</label></div>
+        <div class="radio-row"><input type="radio" name="af_qty" value="oligo"> <label>Oligohydramnios</label></div>
+        <div class="radio-row"><input type="radio" name="af_qty" value="poly"> <label>Polyhydramnios</label></div>
+      </div>
+      <div class="finding-group">
+        <h5>Severity</h5>
+        <div class="radio-row"><input type="radio" name="af_severity" value="nocomments" checked> <label>No comments</label></div>
+        <div class="radio-row"><input type="radio" name="af_severity" value="mild"> <label>Mild</label></div>
+        <div class="radio-row"><input type="radio" name="af_severity" value="mildmod"> <label>Mild to moderate</label></div>
+        <div class="radio-row"><input type="radio" name="af_severity" value="severe"> <label>Severe</label></div>
+      </div>
     </div>
-  </form>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="amniotic_fluid" id="out_amniotic" rows="2"><%= data.amniotic_fluid || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<!-- ============ PLACENTA ============ -->
+<details class="organ" data-organ="placenta">
+  <summary>Placenta</summary>
+  <div class="organ-body">
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Position</h5>
+        <div class="radio-row"><input type="radio" name="pl_position" value="anterior" checked> <label>Anterior</label></div>
+        <div class="radio-row"><input type="radio" name="pl_position" value="fundal"> <label>Fundal</label></div>
+        <div class="radio-row"><input type="radio" name="pl_position" value="anterior rt. lateral"> <label>Anterior Rt. lateral</label></div>
+        <div class="radio-row"><input type="radio" name="pl_position" value="anterior lt. lateral"> <label>Anterior Lt. lateral</label></div>
+        <div class="radio-row"><input type="radio" name="pl_position" value="right lateral"> <label>Right lateral</label></div>
+        <div class="radio-row"><input type="radio" name="pl_position" value="left lateral"> <label>Left lateral</label></div>
+        <div class="radio-row"><input type="radio" name="pl_position" value="posteriorly"> <label>Posteriorly</label></div>
+        <div class="radio-row"><input type="radio" name="pl_position" value="previa"> <label>Placenta previa</label></div>
+      </div>
+      <div class="finding-group">
+        <h5>Previa type</h5>
+        <div class="radio-row"><input type="radio" name="pl_type" value="nocomments" checked> <label>No comments</label></div>
+        <div class="radio-row"><input type="radio" name="pl_type" value="type i"> <label>Type I</label></div>
+        <div class="radio-row"><input type="radio" name="pl_type" value="type ii"> <label>Type II</label></div>
+        <div class="radio-row"><input type="radio" name="pl_type" value="type iii"> <label>Type III</label></div>
+      </div>
+    </div>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="placenta" id="out_placenta" rows="2"><%= data.placenta || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<!-- ============ C.V.S ============ -->
+<details class="organ" data-organ="cvs">
+  <summary>C.V.S (fetal cardiac activity)</summary>
+  <div class="organ-body">
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Foetal cardiac activity</h5>
+        <div class="radio-row"><input type="radio" name="cvs_activity" value="normal" checked> <label>Normal</label></div>
+        <div class="radio-row"><input type="radio" name="cvs_activity" value="distress"> <label>In distress</label></div>
+        <div class="radio-row"><input type="radio" name="cvs_activity" value="absent"> <label>Absent</label></div>
+      </div>
+    </div>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="cvs" id="out_cvs" rows="2"><%= data.cvs || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<!-- ============ LIE ============ -->
+<details class="organ" data-organ="lie">
+  <summary>Lie / presentation</summary>
+  <div class="organ-body">
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Vertical lie</h5>
+        <div class="radio-row"><input type="radio" name="lie_vertical" value="cephalic" checked> <label>Cephalic</label></div>
+        <div class="radio-row"><input type="radio" name="lie_vertical" value="breech"> <label>Breech</label></div>
+        <div class="radio-row"><input type="radio" name="lie_vertical" value="nocomments"> <label>No comments</label></div>
+      </div>
+      <div class="finding-group">
+        <h5>Transverse lie</h5>
+        <div class="radio-row"><input type="radio" name="lie_transverse" value="nocomments" checked> <label>No comments</label></div>
+        <div class="radio-row"><input type="radio" name="lie_transverse" value="rtflank"> <label>Head in Rt. flank</label></div>
+        <div class="radio-row"><input type="radio" name="lie_transverse" value="ltflank"> <label>Head in Lt. flank</label></div>
+      </div>
+    </div>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="lie" id="out_lie" rows="2"><%= data.lie || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<!-- ============ FETAL MORPHOLOGY ============ -->
+<details class="organ" data-organ="morphology">
+  <summary>Fetal morphology</summary>
+  <div class="organ-body">
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>C.N.S</h5>
+        <div class="radio-row"><input type="radio" name="fm_ventricles" value="normal" checked> <label>Ventricles normal</label></div>
+        <div class="radio-row"><input type="radio" name="fm_ventricles" value="dilated"> <label>Ventricles dilated</label></div>
+        <div class="radio-row" style="margin-top:6px;"><input type="radio" name="fm_csf" value="normal" checked> <label>C.S.F normal</label></div>
+        <div class="radio-row"><input type="radio" name="fm_csf" value="abnormal"> <label>C.S.F abnormal</label></div>
+        <div class="radio-row" style="margin-top:6px;"><input type="radio" name="fm_cerebrum" value="normal" checked> <label>Cerebrum normal</label></div>
+        <div class="radio-row"><input type="radio" name="fm_cerebrum" value="abnormal"> <label>Cerebrum abnormal</label></div>
+        <div class="radio-row" style="margin-top:6px;"><input type="radio" name="fm_cerebellum" value="normal" checked> <label>Cerebellum normal</label></div>
+        <div class="radio-row"><input type="radio" name="fm_cerebellum" value="abnormal"> <label>Cerebellum abnormal</label></div>
+        <div class="radio-row" style="margin-top:6px;"><input type="radio" name="fm_orbits" value="normal" checked> <label>Orbits normal</label></div>
+        <div class="radio-row"><input type="radio" name="fm_orbits" value="protruded"> <label>Orbits protruded</label></div>
+        <div class="radio-row" style="margin-top:6px;"><input type="radio" name="fm_spine" value="normal" checked> <label>Spine normal</label></div>
+        <div class="radio-row"><input type="radio" name="fm_spine" value="abnormal"> <label>Spine abnormal</label></div>
+      </div>
+      <div class="finding-group">
+        <h5>Abdomen</h5>
+        <div class="radio-row"><input type="radio" name="fm_liver" value="normal" checked> <label>Liver normal</label></div>
+        <div class="radio-row"><input type="radio" name="fm_liver" value="abnormal"> <label>Liver abnormal</label></div>
+        <div class="radio-row" style="margin-top:6px;"><input type="radio" name="fm_kidney" value="normal" checked> <label>Kidney normal</label></div>
+        <div class="radio-row"><input type="radio" name="fm_kidney" value="abnormal"> <label>Kidney abnormal</label></div>
+        <div class="radio-row" style="margin-top:6px;"><input type="radio" name="fm_bladder" value="normal" checked> <label>Bladder normal</label></div>
+        <div class="radio-row"><input type="radio" name="fm_bladder" value="abnormal"> <label>Bladder abnormal</label></div>
+      </div>
+      <div class="finding-group">
+        <h5>Umbilical cord / chest</h5>
+        <div class="radio-row"><input type="radio" name="fm_cord" value="normal" checked> <label>Cord normal</label></div>
+        <div class="radio-row"><input type="radio" name="fm_cord" value="abnormal"> <label>Cord abnormal</label></div>
+        <div class="sub-inputs"><select name="fm_cord_type"><option value="thick">thick</option><option value="thin">thin</option></select></div>
+        <div class="radio-row" style="margin-top:6px;"><input type="radio" name="fm_chest" value="normal" checked> <label>Chest normal</label></div>
+        <div class="radio-row"><input type="radio" name="fm_chest" value="abnormal"> <label>Chest abnormal</label></div>
+      </div>
+    </div>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="fetal_morphology" id="out_morphology" rows="3"><%= data.fetal_morphology || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<!-- ============ BIOMETRY ============ -->
+<details class="organ" data-organ="biometry">
+  <summary>Biometry &amp; EDD</summary>
+  <div class="organ-body">
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Measurements</h5>
+        <div class="sub-inputs" style="margin-left:0;"><span>Gestational sac diameter</span><input type="number" name="bio_gs" style="width:60px;"><span>mm</span></div>
+        <div class="sub-inputs" style="margin-left:0;"><span>Crown rump length</span><input type="number" name="bio_crl" step="0.1" style="width:60px;"><span>cm</span></div>
+        <div class="sub-inputs" style="margin-left:0;"><span>Bi-parietal diameter</span><input type="number" name="bio_bpd" style="width:60px;"><span>mm</span></div>
+      </div>
+      <div class="finding-group">
+        <h5>Expected date of delivery</h5>
+        <input type="date" name="edd" value="<%= data.edd || '' %>">
+      </div>
+    </div>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="biometry" id="out_biometry" rows="2"><%= data.biometry || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<!-- ============ REMARKS ============ -->
+<details class="organ" open data-organ="remarks">
+  <summary>Remarks / overall impression</summary>
+  <div class="organ-body">
+    <div class="field" style="margin-bottom:0;">
+      <textarea name="remarks" id="out_remarks" rows="2"><%= data.remarks || (editing ? '' : 'Normal fetus.') %></textarea>
+    </div>
+  </div>
+</details>
+
+<div class="section-label">Sign-off</div>
+<div class="card card-pad" style="margin-bottom:24px;">
+  <div class="form-grid">
+    <div class="field">
+      <label for="sonographer">Sonographer</label>
+      <input type="text" id="sonographer" name="sonographer" value="<%= data.sonographer || currentUser.full_name %>">
+    </div>
+    <div class="field">
+      <label for="radiologist">Reporting radiologist</label>
+      <input type="text" id="radiologist" name="radiologist" placeholder="Dr. …" value="<%= data.radiologist || '' %>">
+    </div>
+  </div>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary"><%= editing ? 'Save changes' : 'Save & generate report' %></button>
+    <a href="<%= editing ? `/reports/obs/${reportId}/print` : `/patients/${patient.id}` %>" class="btn btn-outline">Cancel</a>
+  </div>
 </div>
+</form>
+
+<script src="/js/obs-report.js"></script>
 
 <%- include('partials/footer') %>
