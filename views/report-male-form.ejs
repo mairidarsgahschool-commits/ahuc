@@ -1,0 +1,358 @@
+<%- include('partials/header', { title: (editing ? 'Edit report' : (hasProstate ? 'Male Case' : 'Female Case')) + ' — ' + patient.name }) %>
+
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Patient #<%= patient.id %> · <%= patient.name %> · <%= hasProstate ? 'Male Case' : 'Female Case' %></span>
+    <h1><%= editing ? 'Edit abdominal ultrasound report' : 'Abdominal ultrasound — organ findings' %></h1>
+    <p>Each organ opens with the normal-report template already filled in. Adjust the structured findings and the description updates itself — you can also edit the description text directly before saving.</p>
+  </div>
+</div>
+
+<% if (!editing) { %>
+<div class="template-picker no-print">
+  <a href="/patients/<%= patient.id %>/report/male/new?template=without_prostate" class="<%= !hasProstate ? 'active' : '' %>">Female Case</a>
+  <a href="/patients/<%= patient.id %>/report/male/new?template=with_prostate" class="<%= hasProstate ? 'active' : '' %>">Male Case</a>
+</div>
+<% } %>
+
+<form method="post" action="<%= editing ? `/reports/male/${reportId}/edit` : `/patients/${patient.id}/report/male` %>" id="organForm">
+<input type="hidden" name="has_prostate" value="<%= hasProstate ? '1' : '0' %>">
+
+<!-- ============ LIVER ============ -->
+<details class="organ" data-organ="liver">
+  <summary>Liver</summary>
+  <div class="organ-body">
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Size</h5>
+        <div class="radio-row"><input type="radio" name="liver_size" value="normal" checked> <label>Normal</label></div>
+        <div class="radio-row"><input type="radio" name="liver_size" value="enlarged"> <label>Enlarged</label></div>
+        <div class="radio-row"><input type="radio" name="liver_size" value="shrinked"> <label>Reduced</label></div>
+        <div class="radio-row"><input type="radio" name="liver_size" value="nocomments"> <label>No comments</label></div>
+        <div class="sub-inputs"><span>size</span><input type="number" name="liver_size_cm" step="0.1"><span>cm</span></div>
+      </div>
+      <div class="finding-group">
+        <h5>Parenchyma</h5>
+        <div class="radio-row"><input type="radio" name="liver_parenchyma" value="normal" checked> <label>Normal echotexture</label></div>
+        <div class="radio-row"><input type="radio" name="liver_parenchyma" value="coarse"> <label>Coarse echotexture</label></div>
+        <div class="radio-row"><input type="radio" name="liver_parenchyma" value="fatty"> <label>Fatty (steatosis)</label></div>
+        <div class="radio-row"><input type="radio" name="liver_parenchyma" value="nocomments"> <label>No comments</label></div>
+      </div>
+      <div class="finding-group">
+        <h5>Echogenicity</h5>
+        <div class="radio-row"><input type="radio" name="liver_echo" value="iso" checked> <label>IsoEchogenic</label></div>
+        <div class="radio-row"><input type="radio" name="liver_echo" value="hyper"> <label>HyperEchogenic</label></div>
+        <div class="radio-row"><input type="radio" name="liver_echo" value="hypo"> <label>HypoEchogenic</label></div>
+        <div class="radio-row"><input type="radio" name="liver_echo" value="nocomments"> <label>No comments</label></div>
+      </div>
+    </div>
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Mass / cyst</h5>
+        <div class="radio-row"><input type="radio" name="liver_mass" value="none" checked> <label>None seen</label></div>
+        <div class="radio-row"><input type="radio" name="liver_mass" value="present"> <label>Present</label></div>
+        <div class="sub-inputs">
+          <select name="liver_mass_kind"><option value="cyst">simple cyst</option><option value="solid">solid mass</option></select>
+          <select name="liver_mass_location"><option value="right lobe">right lobe</option><option value="left lobe">left lobe</option><option value="segment">mid segment</option></select>
+        </div>
+        <div class="sub-inputs">
+          <input type="number" name="liver_mass_w" placeholder="w" style="width:50px;">×<input type="number" name="liver_mass_h" placeholder="h" style="width:50px;"><span>mm</span>
+        </div>
+      </div>
+    </div>
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Bile ducts</h5>
+        <div class="radio-row"><input type="radio" name="liver_bile_ducts" value="normal" checked> <label>Not dilated</label></div>
+        <div class="radio-row"><input type="radio" name="liver_bile_ducts" value="dilated"> <label>Dilated</label></div>
+        <div class="radio-row"><input type="radio" name="liver_bile_ducts" value="nocomments"> <label>No comments</label></div>
+      </div>
+      <div class="finding-group">
+        <h5>Blood vessels</h5>
+        <div class="radio-row"><input type="radio" name="liver_vessels" value="normal" checked> <label>Not dilated</label></div>
+        <div class="radio-row"><input type="radio" name="liver_vessels" value="dilated"> <label>Dilated</label></div>
+        <div class="radio-row"><input type="radio" name="liver_vessels" value="nocomments"> <label>No comments</label></div>
+      </div>
+      <div class="finding-group">
+        <h5>Common bile duct</h5>
+        <div class="radio-row"><input type="radio" name="liver_cbd" value="normal" checked> <label>Normal</label></div>
+        <div class="radio-row"><input type="radio" name="liver_cbd" value="dilated"> <label>Dilated</label></div>
+        <div class="radio-row"><input type="radio" name="liver_cbd" value="nocomments"> <label>No comments</label></div>
+        <div class="sub-inputs">
+          <select name="liver_cbd_cause"><option value="a stone">a stone</option><option value="a stricture">a stricture</option><option value="an obstructing mass">an obstructing mass</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="liver" id="out_liver" rows="3"><%= data.liver || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<!-- ============ GALL BLADDER ============ -->
+<details class="organ" data-organ="gb">
+  <summary>Gall bladder</summary>
+  <div class="organ-body">
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Measurements</h5>
+        <div class="sub-inputs" style="margin-left:0;"><span>L</span><input type="number" name="gb_len" style="width:55px;"><span>mm</span></div>
+        <div class="sub-inputs" style="margin-left:0;"><span>W</span><input type="number" name="gb_width" style="width:55px;"><span>mm</span></div>
+        <div class="sub-inputs" style="margin-left:0;"><span>T</span><input type="number" name="gb_thick" style="width:55px;"><span>mm</span></div>
+      </div>
+      <div class="finding-group">
+        <h5>Wall / interior</h5>
+        <div class="radio-row"><input type="radio" name="gb_wall" value="normal" checked> <label>Normal, smooth</label></div>
+        <div class="radio-row"><input type="radio" name="gb_wall" value="thickened"> <label>Thickened / oedematous</label></div>
+      </div>
+      <div class="finding-group">
+        <h5>Gall stone</h5>
+        <div class="radio-row"><input type="radio" name="gb_stone" value="none" checked> <label>None</label></div>
+        <div class="radio-row"><input type="radio" name="gb_stone" value="single"> <label>Single</label></div>
+        <div class="radio-row"><input type="radio" name="gb_stone" value="multiple"> <label>Multiple</label></div>
+        <div class="radio-row"><input type="radio" name="gb_stone" value="polyp"> <label>Polyp</label></div>
+        <div class="sub-inputs"><input type="checkbox" name="gb_stone_impacted" value="1"><label style="text-transform:none;">impacted in neck</label></div>
+      </div>
+      <div class="finding-group">
+        <h5>Sludge / debris</h5>
+        <div class="radio-row"><input type="radio" name="gb_sludge" value="none" checked> <label>None</label></div>
+        <div class="radio-row"><input type="radio" name="gb_sludge" value="settled"> <label>Settled</label></div>
+        <div class="radio-row"><input type="radio" name="gb_sludge" value="scattered"> <label>Scattered</label></div>
+      </div>
+    </div>
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Cystic duct</h5>
+        <div class="radio-row"><input type="radio" name="gb_cystic_duct" value="normal" checked> <label>Normal</label></div>
+        <div class="radio-row"><input type="radio" name="gb_cystic_duct" value="dilated"> <label>Dilated</label></div>
+      </div>
+      <div class="finding-group">
+        <h5>Common bile duct</h5>
+        <div class="radio-row"><input type="radio" name="gb_cbd" value="normal" checked> <label>Normal</label></div>
+        <div class="radio-row"><input type="radio" name="gb_cbd" value="dilated"> <label>Dilated</label></div>
+      </div>
+    </div>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="gall_bladder" id="out_gb" rows="3"><%= data.gall_bladder || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<!-- ============ PANCREAS ============ -->
+<details class="organ" data-organ="pancreas">
+  <summary>Pancreas</summary>
+  <div class="organ-body">
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Shape / size / echotexture</h5>
+        <div class="radio-row"><input type="radio" name="pancreas_normal" value="normal" checked> <label>Normal</label></div>
+        <div class="radio-row"><input type="radio" name="pancreas_normal" value="abnormal"> <label>Abnormal</label></div>
+        <div class="radio-row"><input type="radio" name="pancreas_normal" value="pancreatitis"> <label>Enlarged (pancreatitis)</label></div>
+      </div>
+      <div class="finding-group">
+        <h5>Mass</h5>
+        <div class="radio-row"><input type="radio" name="pancreas_mass" value="none" checked> <label>None</label></div>
+        <div class="radio-row"><input type="radio" name="pancreas_mass" value="present"> <label>Present</label></div>
+        <div class="sub-inputs">
+          <select name="pancreas_mass_type"><option value="cystic">cystic</option><option value="solid">solid</option></select>
+          <select name="pancreas_mass_location"><option value="head">head</option><option value="body">body</option><option value="tail">tail</option></select>
+        </div>
+        <div class="sub-inputs"><input type="number" name="pancreas_mass_w" placeholder="w" style="width:50px;">×<input type="number" name="pancreas_mass_h" placeholder="h" style="width:50px;"><span>mm</span></div>
+      </div>
+    </div>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="pancreas" id="out_pancreas" rows="2"><%= data.pancreas || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<!-- ============ SPLEEN ============ -->
+<details class="organ" data-organ="spleen">
+  <summary>Spleen</summary>
+  <div class="organ-body">
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Size</h5>
+        <div class="radio-row"><input type="radio" name="spleen_size" value="normal" checked> <label>Normal</label></div>
+        <div class="radio-row"><input type="radio" name="spleen_size" value="slightly"> <label>Slightly enlarged</label></div>
+        <div class="radio-row"><input type="radio" name="spleen_size" value="moderately"> <label>Moderately enlarged</label></div>
+        <div class="radio-row"><input type="radio" name="spleen_size" value="massively"> <label>Massively enlarged</label></div>
+      </div>
+      <div class="finding-group">
+        <h5>Echotexture</h5>
+        <div class="radio-row"><input type="radio" name="spleen_echo" value="normal" checked> <label>Normal — no focal or diffuse lesion</label></div>
+        <div class="radio-row"><input type="radio" name="spleen_echo" value="stone"> <label>Abnormal — stone deposits</label></div>
+        <div class="radio-row"><input type="radio" name="spleen_echo" value="mass"> <label>Abnormal — due to mass</label></div>
+      </div>
+    </div>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="spleen" id="out_spleen" rows="2"><%= data.spleen || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<!-- ============ RIGHT KIDNEY ============ -->
+<details class="organ" data-organ="kidney_r">
+  <summary>Right kidney</summary>
+  <div class="organ-body">
+    <%- include('partials/kidney-fields', { prefix: 'kr' }) %>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="kidney_r" id="out_kidney_r" rows="3"><%= data.kidney_r || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<!-- ============ LEFT KIDNEY ============ -->
+<details class="organ" data-organ="kidney_l">
+  <summary>Left kidney</summary>
+  <div class="organ-body">
+    <%- include('partials/kidney-fields', { prefix: 'kl' }) %>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="kidney_l" id="out_kidney_l" rows="3"><%= data.kidney_l || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<!-- ============ URINARY BLADDER ============ -->
+<details class="organ" data-organ="ub">
+  <summary>Urinary bladder</summary>
+  <div class="organ-body">
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Interior</h5>
+        <div class="radio-row"><input type="radio" name="ub_interior" value="normal" checked> <label>Normal</label></div>
+        <div class="radio-row"><input type="radio" name="ub_interior" value="mass"> <label>Mass present</label></div>
+        <div class="sub-inputs">
+          <select name="ub_mass_echo"><option value="hyperechoic">hyperechoic</option><option value="hypoechoic">hypoechoic</option></select>
+          <input type="number" name="ub_mass_w" placeholder="l" style="width:50px;">×<input type="number" name="ub_mass_h" placeholder="w" style="width:50px;"><span>mm</span>
+        </div>
+        <div class="sub-inputs"><input type="checkbox" name="ub_mass_wider" value="1"><label style="text-transform:none;">width more than length</label></div>
+        <div class="sub-inputs">
+          <select name="ub_mass_location"><option value="postero-inferior">postero-inferior</option><option value="right-lateral">right-lateral</option><option value="left-lateral">left-lateral</option></select>
+        </div>
+      </div>
+      <div class="finding-group">
+        <h5>Walls</h5>
+        <div class="radio-row"><input type="radio" name="ub_walls" value="normal" checked> <label>Normal — no thickening / oedema</label></div>
+        <div class="radio-row"><input type="radio" name="ub_walls" value="stone"> <label>Vesical calculus present</label></div>
+        <div class="sub-inputs">
+          <select name="ub_stone_count"><option value="single">single</option><option value="multiple">multiple</option></select>
+          <input type="number" name="ub_stone_w" placeholder="w" style="width:50px;">×<input type="number" name="ub_stone_h" placeholder="h" style="width:50px;"><span>mm</span>
+        </div>
+      </div>
+    </div>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="urinary_bladder" id="out_ub" rows="2"><%= data.urinary_bladder || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<% if (hasProstate) { %>
+<!-- ============ PROSTATE ============ -->
+<details class="organ" data-organ="prostate">
+  <summary>Prostate</summary>
+  <div class="organ-body">
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Size / shape / echotexture</h5>
+        <div class="radio-row"><input type="radio" name="pr_normal" value="normal" checked> <label>Normal size, shape, echotexture</label></div>
+        <div class="radio-row"><input type="radio" name="pr_normal" value="abnormal"> <label>Abnormal</label></div>
+        <div class="sub-inputs"><span>APD</span><input type="number" name="pr_apd" style="width:60px;"><span>mm</span></div>
+      </div>
+      <div class="finding-group">
+        <h5>Lobes / capsule</h5>
+        <div class="radio-row"><input type="radio" name="pr_lobes" value="normal" checked> <label>Normal lobes</label></div>
+        <div class="radio-row"><input type="radio" name="pr_lobes" value="enlarged"> <label>Enlarged lobes</label></div>
+        <div class="radio-row"><input type="radio" name="pr_capsule" value="intact" checked> <label>Capsule intact</label></div>
+        <div class="radio-row"><input type="radio" name="pr_capsule" value="notintact"> <label>Capsule not intact</label></div>
+      </div>
+      <div class="finding-group">
+        <h5>Residual urine / remarks</h5>
+        <div class="radio-row"><input type="radio" name="pr_residual" value="no" checked> <label>No residual urine</label></div>
+        <div class="radio-row"><input type="radio" name="pr_residual" value="yes"> <label>Residual urine present</label></div>
+        <div class="sub-inputs"><span>vol.</span><input type="number" name="pr_residual_vol" style="width:60px;"><span>ml</span></div>
+        <div class="radio-row" style="margin-top:8px;"><input type="radio" name="pr_remarks" value="none" checked> <label>No further remarks</label></div>
+        <div class="radio-row"><input type="radio" name="pr_remarks" value="prostatitis"> <label>Prostatitis</label></div>
+        <div class="radio-row"><input type="radio" name="pr_remarks" value="bph"> <label>BPH</label></div>
+        <div class="radio-row"><input type="radio" name="pr_remarks" value="calcification"> <label>Calcification</label></div>
+      </div>
+    </div>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="prostate" id="out_prostate" rows="3"><%= data.prostate || '' %></textarea>
+    </div>
+  </div>
+</details>
+<% } %>
+
+<!-- ============ OTHERS ============ -->
+<details class="organ" data-organ="others">
+  <summary>Others</summary>
+  <div class="organ-body">
+    <div class="finding-grid">
+      <div class="finding-group">
+        <h5>Mass / cyst / fluid</h5>
+        <div class="radio-row"><input type="radio" name="oth_mass" value="none" checked> <label>None seen</label></div>
+        <div class="radio-row"><input type="radio" name="oth_mass" value="present"> <label>Present</label></div>
+        <div class="sub-inputs">
+          <select name="oth_mass_type"><option value="cystic">cystic</option><option value="solid">solid</option></select>
+          <input type="number" name="oth_mass_w" placeholder="w" style="width:50px;">×<input type="number" name="oth_mass_h" placeholder="h" style="width:50px;"><span>mm</span>
+        </div>
+      </div>
+      <div class="finding-group">
+        <h5>Free fluid</h5>
+        <div class="radio-row"><input type="radio" name="oth_fluid" value="no" checked> <label>None</label></div>
+        <div class="radio-row"><input type="radio" name="oth_fluid" value="yes"> <label>Present</label></div>
+      </div>
+      <div class="finding-group">
+        <h5>Lymph nodes</h5>
+        <div class="radio-row"><input type="radio" name="oth_nodes" value="normal" checked> <label>Normal</label></div>
+        <div class="radio-row"><input type="radio" name="oth_nodes" value="enlarged"> <label>Enlarged</label></div>
+      </div>
+    </div>
+    <div class="generated-desc">
+      <h5>Description</h5>
+      <textarea name="others" id="out_others" rows="2"><%= data.others || '' %></textarea>
+    </div>
+  </div>
+</details>
+
+<!-- ============ REMARKS ============ -->
+<details class="organ" open data-organ="remarks">
+  <summary>Remarks / overall impression</summary>
+  <div class="organ-body">
+    <div class="field" style="margin-bottom:0;">
+      <textarea name="remarks" id="out_remarks" rows="2"><%= data.remarks || (editing ? '' : 'Normal.') %></textarea>
+    </div>
+  </div>
+</details>
+
+<div class="section-label">Sign-off</div>
+<div class="card card-pad" style="margin-bottom:24px;">
+  <div class="form-grid">
+    <div class="field">
+      <label for="sonographer">Sonographer</label>
+      <input type="text" id="sonographer" name="sonographer" value="<%= data.sonographer || currentUser.full_name %>">
+    </div>
+    <div class="field">
+      <label for="radiologist">Reporting radiologist</label>
+      <input type="text" id="radiologist" name="radiologist" placeholder="Dr. …" value="<%= data.radiologist || '' %>">
+    </div>
+  </div>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary"><%= editing ? 'Save changes' : 'Save & generate report' %></button>
+    <a href="<%= editing ? `/reports/male/${reportId}/print` : `/patients/${patient.id}` %>" class="btn btn-outline">Cancel</a>
+  </div>
+</div>
+</form>
+
+<script src="/js/organ-report.js"></script>
+
+<%- include('partials/footer') %>

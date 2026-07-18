@@ -1,0 +1,66 @@
+<%- include('partials/header', { title: 'Staff accounts' }) %>
+
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Admin</span>
+    <h1>Staff accounts</h1>
+    <p>Everyone who logs in to record patients or write reports needs an account here.</p>
+  </div>
+</div>
+
+<div class="card card-pad" style="max-width:640px; margin-bottom:32px;">
+  <% if (error) { %><div class="login-error"><%= error %></div><% } %>
+  <form method="post" action="/users">
+    <div class="form-grid">
+      <div class="field">
+        <label for="full_name">Full name</label>
+        <input type="text" id="full_name" name="full_name" required>
+      </div>
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="field">
+        <label for="password">Temporary password</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <div class="field">
+        <label for="role">Role</label>
+        <select id="role" name="role">
+          <option value="staff">Reception / staff</option>
+          <option value="sonographer">Sonographer</option>
+          <option value="radiologist">Radiologist</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Create account</button>
+  </form>
+</div>
+
+<div class="table-wrap" style="max-width:760px;">
+  <table>
+    <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Created</th><th></th></tr></thead>
+    <tbody>
+      <% users.forEach(u => { %>
+        <tr>
+          <td><%= u.full_name %></td>
+          <td class="mono"><%= u.username %></td>
+          <td><span class="badge badge-role"><%= u.role %></span></td>
+          <td><%= fmtDate(u.created_at) %></td>
+          <td>
+            <% if (u.id !== currentUser.id) { %>
+            <form method="post" action="/users/<%= u.id %>/delete" onsubmit="return confirm('Remove this account?');">
+              <button type="submit" class="btn btn-danger">Remove</button>
+            </form>
+            <% } else { %><span style="color:var(--text-soft); font-size:12.5px;">(you)</span><% } %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('partials/footer') %>

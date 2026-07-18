@@ -1,0 +1,66 @@
+<%- include('partials/header', { title: 'New patient' }) %>
+
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Step 2 of 2 · <%= caseLabel %></span>
+    <h1>Patient details</h1>
+    <p>Once saved, this opens straight into the <%= caseLabel.toLowerCase() %> report.</p>
+  </div>
+</div>
+
+<div class="card card-pad" style="max-width:720px;">
+  <form method="post" action="/patients">
+    <input type="hidden" name="case" value="<%= caseType %>">
+
+    <div class="form-grid">
+      <div class="field">
+        <label for="name">Full name</label>
+        <input type="text" id="name" name="name" required autofocus>
+      </div>
+      <div class="field">
+        <label for="age">Age</label>
+        <input type="text" id="age" name="age" placeholder="e.g. 34" required>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label>Sex</label>
+        <input type="text" value="<%= sex %>" disabled style="background:#EEF3F1; color:var(--text-soft);">
+        <input type="hidden" name="sex" value="<%= sex %>">
+      </div>
+      <div class="field">
+        <label for="exam_date">Exam date</label>
+        <input type="date" id="exam_date" name="exam_date" value="<%= today %>" required>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label for="ref_doctor_id">Referring doctor</label>
+        <select id="ref_doctor_id" name="ref_doctor_id">
+          <option value="">— Self —</option>
+          <% doctors.forEach(d => { %>
+            <option value="<%= d.id %>"><%= d.name %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="field">
+        <label for="amount_received">Amount received (Rs.)</label>
+        <input type="number" id="amount_received" name="amount_received" min="0" step="0.01" value="0">
+      </div>
+    </div>
+
+    <div class="field checkbox-field">
+      <input type="checkbox" id="is_free" name="is_free" value="1">
+      <label for="is_free" style="text-transform:none; font-weight:500;">This exam is free of charge</label>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Save &amp; open report</button>
+      <a href="/patients/new" class="btn btn-outline">← Change case type</a>
+    </div>
+  </form>
+</div>
+
+<%- include('partials/footer') %>

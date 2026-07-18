@@ -1,0 +1,65 @@
+<%- include('partials/header', { title: (editing ? 'Edit report' : 'Gynae Case') + ' — ' + patient.name }) %>
+
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Patient #<%= patient.id %> · <%= patient.name %></span>
+    <h1><%= editing ? 'Edit gynaecological ultrasound report' : 'Gynaecological ultrasound report' %></h1>
+    <p>Pre-filled with the normal-report template. Edit only what's abnormal for this patient.</p>
+  </div>
+</div>
+
+<div class="card card-pad">
+  <form method="post" action="<%= editing ? `/reports/gynae/${reportId}/edit` : `/patients/${patient.id}/report/gynae` %>">
+    <div class="field">
+      <label for="uterus">Uterus</label>
+      <textarea id="uterus" name="uterus" rows="2"><%= data.uterus || '' %></textarea>
+    </div>
+    <div class="form-grid">
+      <div class="field">
+        <label for="adnexa_l">Left adnexa</label>
+        <textarea id="adnexa_l" name="adnexa_l" rows="2"><%= data.adnexa_l || '' %></textarea>
+      </div>
+      <div class="field">
+        <label for="adnexa_r">Right adnexa</label>
+        <textarea id="adnexa_r" name="adnexa_r" rows="2"><%= data.adnexa_r || '' %></textarea>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="field">
+        <label for="ovary_l">Left ovary</label>
+        <textarea id="ovary_l" name="ovary_l" rows="2"><%= data.ovary_l || '' %></textarea>
+      </div>
+      <div class="field">
+        <label for="ovary_r">Right ovary</label>
+        <textarea id="ovary_r" name="ovary_r" rows="2"><%= data.ovary_r || '' %></textarea>
+      </div>
+    </div>
+    <div class="field">
+      <label for="pouch_douglas">Pouch of Douglas</label>
+      <textarea id="pouch_douglas" name="pouch_douglas" rows="2"><%= data.pouch_douglas || '' %></textarea>
+    </div>
+    <div class="field">
+      <label for="remarks">Remarks / impression</label>
+      <textarea id="remarks" name="remarks" rows="2"><%= data.remarks || '' %></textarea>
+    </div>
+
+    <div class="section-label">Sign-off</div>
+    <div class="form-grid">
+      <div class="field">
+        <label for="sonographer">Sonographer</label>
+        <input type="text" id="sonographer" name="sonographer" value="<%= data.sonographer || currentUser.full_name %>">
+      </div>
+      <div class="field">
+        <label for="radiologist">Reporting radiologist</label>
+        <input type="text" id="radiologist" name="radiologist" placeholder="Dr. …" value="<%= data.radiologist || '' %>">
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary"><%= editing ? 'Save changes' : 'Save & generate report' %></button>
+      <a href="<%= editing ? `/reports/gynae/${reportId}/print` : `/patients/${patient.id}` %>" class="btn btn-outline">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<%- include('partials/footer') %>

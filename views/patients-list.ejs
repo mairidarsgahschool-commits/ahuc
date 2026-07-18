@@ -1,0 +1,43 @@
+<%- include('partials/header', { title: 'Patients' }) %>
+
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Records</span>
+    <h1>Patients</h1>
+    <p><%= patients.length %> shown<% if (q) { %> for search "<%= q %>"<% } %></p>
+  </div>
+  <a href="/patients/new" class="btn btn-primary">+ New patient</a>
+</div>
+
+<form method="get" action="/patients" style="margin-bottom:20px; max-width:360px;">
+  <div class="field" style="margin-bottom:0;">
+    <input type="text" name="q" placeholder="Search by name or patient ID…" value="<%= q %>">
+  </div>
+</form>
+
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>ID</th><th>Name</th><th>Age / Sex</th><th>Exam date</th><th>Referred by</th><th>Payment</th><th></th></tr></thead>
+    <tbody>
+      <% if (patients.length === 0) { %>
+        <tr><td colspan="7"><div class="empty-state"><h3>No matches</h3><p>Try a different search, or register a new patient.</p></div></td></tr>
+      <% } %>
+      <% patients.forEach(p => { %>
+        <tr>
+          <td class="mono">#<%= p.id %></td>
+          <td><a href="/patients/<%= p.id %>"><%= p.name %></a></td>
+          <td><%= p.age %> / <%= p.sex %></td>
+          <td><%= fmtDate(p.exam_date) %></td>
+          <td><%= p.ref_doctor_name || '—' %></td>
+          <td>
+            <% if (p.is_free) { %><span class="badge badge-free">Free</span>
+            <% } else { %><span class="badge badge-paid">Rs. <%= p.amount_received %></span><% } %>
+          </td>
+          <td><a href="/patients/<%= p.id %>">View →</a></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,41 @@
+<div class="finding-grid">
+  <div class="finding-group">
+    <h5>Size / shape / outline</h5>
+    <div class="radio-row"><input type="radio" name="<%= prefix %>_size" value="normal" checked> <label>Normal size</label></div>
+    <div class="radio-row"><input type="radio" name="<%= prefix %>_size" value="abnormal"> <label>Abnormal size</label></div>
+    <div class="radio-row"><input type="radio" name="<%= prefix %>_outline" value="normal" checked> <label>Smooth outline</label></div>
+    <div class="radio-row"><input type="radio" name="<%= prefix %>_outline" value="irregular"> <label>Irregular outline</label></div>
+    <div class="sub-inputs">
+      <span>L</span><input type="number" name="<%= prefix %>_len" style="width:50px;">
+      <span>T</span><input type="number" name="<%= prefix %>_thick" style="width:50px;">
+      <span>cortex</span><input type="number" name="<%= prefix %>_cortex" style="width:50px;"><span>mm</span>
+    </div>
+  </div>
+  <div class="finding-group">
+    <h5>Stones / mass</h5>
+    <div class="radio-row"><input type="radio" name="<%= prefix %>_stones" value="no" checked> <label>No stones</label></div>
+    <div class="radio-row"><input type="radio" name="<%= prefix %>_stones" value="yes"> <label>Stone(s) present</label></div>
+    <div class="sub-inputs">
+      <select name="<%= prefix %>_stones_count"><option value="single">single</option><option value="multiple">multiple</option></select>
+      <input type="number" name="<%= prefix %>_stones_w" placeholder="w" style="width:45px;">×<input type="number" name="<%= prefix %>_stones_h" placeholder="h" style="width:45px;"><span>mm</span>
+    </div>
+    <div class="radio-row" style="margin-top:6px;"><input type="radio" name="<%= prefix %>_mass" value="no" checked> <label>No mass</label></div>
+    <div class="radio-row"><input type="radio" name="<%= prefix %>_mass" value="yes"> <label>Mass present</label></div>
+    <div class="sub-inputs"><select name="<%= prefix %>_mass_type"><option value="solid">solid</option><option value="cystic">cystic</option></select></div>
+    <div class="radio-row" style="margin-top:6px;"><input type="radio" name="<%= prefix %>_cyst" value="no" checked> <label>No simple cyst</label></div>
+    <div class="radio-row"><input type="radio" name="<%= prefix %>_cyst" value="yes"> <label>Simple cortical cyst</label></div>
+    <div class="sub-inputs">
+      <select name="<%= prefix %>_cyst_pole"><option value="upper pole">upper pole</option><option value="mid pole">mid pole</option><option value="lower pole">lower pole</option></select>
+      <input type="number" name="<%= prefix %>_cyst_size" placeholder="size" style="width:55px;"><span>mm</span>
+    </div>
+  </div>
+  <div class="finding-group">
+    <h5>Drainage</h5>
+    <div class="radio-row"><input type="radio" name="<%= prefix %>_hydro" value="no" checked> <label>No hydronephrosis</label></div>
+    <div class="radio-row"><input type="radio" name="<%= prefix %>_hydro" value="yes"> <label>Hydronephrosis present</label></div>
+    <div class="radio-row" style="margin-top:6px;"><input type="radio" name="<%= prefix %>_ureter" value="normal" checked> <label>Ureter normal</label></div>
+    <div class="radio-row"><input type="radio" name="<%= prefix %>_ureter" value="dilated"> <label>Ureter dilated</label></div>
+    <div class="radio-row" style="margin-top:6px;"><input type="radio" name="<%= prefix %>_puj" value="normal" checked> <label>P.U.J normal</label></div>
+    <div class="radio-row"><input type="radio" name="<%= prefix %>_puj" value="dilated"> <label>P.U.J dilated</label></div>
+  </div>
+</div>

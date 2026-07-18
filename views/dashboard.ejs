@@ -1,0 +1,120 @@
+<%- include('partials/header', { title: 'Dashboard' }) %>
+
+<div class="hero-banner">
+  <div>
+    <span class="eyebrow">Ali Hospital &amp; Ultra Sound Centre</span>
+    <h1>Good to see you, <%= currentUser.full_name.split(' ')[0] %>.</h1>
+    <p>Here's what's happening across the clinic today.</p>
+  </div>
+  <div class="hero-banner-actions">
+    <a href="/patients/new" class="btn btn-primary">+ New patient</a>
+    <a href="/patients" class="btn btn-outline-invert">View all patients</a>
+  </div>
+</div>
+
+<div class="quick-cases no-print">
+  <a href="/patients/new?case=male" class="quick-case"><span class="qc-dot" style="background:#1F6F72;"></span>Male Case</a>
+  <a href="/patients/new?case=female" class="quick-case"><span class="qc-dot" style="background:#5FA8A4;"></span>Female Case</a>
+  <a href="/patients/new?case=gynae" class="quick-case"><span class="qc-dot" style="background:#B5622F;"></span>Gynae Case</a>
+  <a href="/patients/new?case=obs" class="quick-case"><span class="qc-dot" style="background:#D08152;"></span>Obs Case</a>
+</div>
+
+<div class="dash-grid">
+
+  <div class="dash-col-main">
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.6"/><path d="M4 20c0-3.9 3.6-7 8-7s8 3.1 8 7" stroke="currentColor" stroke-width="1.6"/></svg>
+        </div>
+        <div class="num"><%= stats.totalPatients %></div><div class="label">Total patients on file</div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 3v4M16 3v4M4 10h16" stroke="currentColor" stroke-width="1.6"/></svg>
+        </div>
+        <div class="num"><%= stats.todayCount %></div><div class="label">Registered today</div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 20V10l8-6 8 6v10" stroke="currentColor" stroke-width="1.6"/><path d="M9 20v-6h6v6" stroke="currentColor" stroke-width="1.6"/></svg>
+        </div>
+        <div class="num"><%= stats.totalMale %></div><div class="label">Abdominal reports</div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="5" stroke="currentColor" stroke-width="1.6"/><path d="M12 14v7M9 21h6" stroke="currentColor" stroke-width="1.6"/></svg>
+        </div>
+        <div class="num"><%= stats.totalGynae %></div><div class="label">Gynae reports</div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.5-7-10a7 7 0 0 1 14 0c0 5.5-7 10-7 10Z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="11" r="2.4" stroke="currentColor" stroke-width="1.6"/></svg>
+        </div>
+        <div class="num"><%= stats.totalObs %></div><div class="label">Obstetric reports</div>
+      </div>
+    </div>
+
+    <div class="section-label">Recently registered patients</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>Name</th><th>Age / Sex</th><th>Exam date</th><th>Referred by</th><th>Payment</th><th></th></tr></thead>
+        <tbody>
+          <% if (recentPatients.length === 0) { %>
+            <tr><td colspan="7"><div class="empty-state"><h3>No patients yet</h3><p>Register your first patient to get started.</p></div></td></tr>
+          <% } %>
+          <% recentPatients.forEach(p => { %>
+            <tr>
+              <td><span class="avatar-badge"><%= p.name.trim().charAt(0).toUpperCase() %></span></td>
+              <td><a href="/patients/<%= p.id %>"><%= p.name %></a><div class="mono" style="font-size:11px; color:var(--text-soft);">#<%= p.id %></div></td>
+              <td><%= p.age %> / <%= p.sex %></td>
+              <td><%= fmtDate(p.exam_date) %></td>
+              <td><%= p.ref_doctor_name || '—' %></td>
+              <td>
+                <% if (p.is_free) { %><span class="badge badge-free">Free</span>
+                <% } else { %><span class="badge badge-paid">Rs. <%= p.amount_received %></span><% } %>
+              </td>
+              <td><a href="/patients/<%= p.id %>">View →</a></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="dash-col-side">
+    <div class="card card-pad">
+      <div class="section-label" style="margin-top:0;">Report mix</div>
+      <% const tot = Math.max(totalReports, 1) %>
+      <div class="mix-row">
+        <span class="mix-label">Abdominal</span>
+        <div class="mix-bar"><div class="mix-fill" style="width:<%= (stats.totalMale/tot*100).toFixed(0) %>%; background:#1F6F72;"></div></div>
+        <span class="mix-count"><%= stats.totalMale %></span>
+      </div>
+      <div class="mix-row">
+        <span class="mix-label">Gynae</span>
+        <div class="mix-bar"><div class="mix-fill" style="width:<%= (stats.totalGynae/tot*100).toFixed(0) %>%; background:#B5622F;"></div></div>
+        <span class="mix-count"><%= stats.totalGynae %></span>
+      </div>
+      <div class="mix-row">
+        <span class="mix-label">Obstetric</span>
+        <div class="mix-bar"><div class="mix-fill" style="width:<%= (stats.totalObs/tot*100).toFixed(0) %>%; background:#D08152;"></div></div>
+        <span class="mix-count"><%= stats.totalObs %></span>
+      </div>
+      <p class="mix-total"><%= totalReports %> report<%= totalReports === 1 ? '' : 's' %> total</p>
+    </div>
+
+    <div class="card card-pad">
+      <div class="section-label" style="margin-top:0;">Shortcuts</div>
+      <div class="shortcut-list">
+        <a href="/patients/new" class="shortcut">→ Register a new patient</a>
+        <a href="/patients" class="shortcut">→ Search existing patients</a>
+        <a href="/doctors" class="shortcut">→ Manage referring doctors</a>
+        <% if (currentUser.role === 'admin') { %><a href="/users" class="shortcut">→ Manage staff accounts</a><% } %>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<%- include('partials/footer') %>

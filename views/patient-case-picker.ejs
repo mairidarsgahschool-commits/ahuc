@@ -1,0 +1,30 @@
+<%- include('partials/header', { title: 'New patient' }) %>
+
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Step 1 of 2</span>
+    <h1>What kind of case is this?</h1>
+    <p>This decides which organs are recorded and which report template opens next.</p>
+  </div>
+</div>
+
+<div class="case-picker">
+  <a href="/patients/new?case=male" class="case-card">
+    <span class="case-name">Male Case</span>
+    <span class="case-desc">Abdominal ultrasound, including prostate</span>
+  </a>
+  <a href="/patients/new?case=female" class="case-card">
+    <span class="case-name">Female Case</span>
+    <span class="case-desc">Abdominal ultrasound</span>
+  </a>
+  <a href="/patients/new?case=gynae" class="case-card">
+    <span class="case-name">Gynae Case</span>
+    <span class="case-desc">Uterus, adnexa and ovaries</span>
+  </a>
+  <a href="/patients/new?case=obs" class="case-card">
+    <span class="case-name">Obs Case</span>
+    <span class="case-desc">Obstetric / pregnancy ultrasound</span>
+  </a>
+</div>
+
+<%- include('partials/footer') %>

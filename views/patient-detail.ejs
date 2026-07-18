@@ -1,0 +1,49 @@
+<%- include('partials/header', { title: patient.name }) %>
+
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Patient #<%= patient.id %></span>
+    <h1><%= patient.name %></h1>
+    <p><%= patient.age %> yrs · <%= patient.sex %> · Exam date <%= fmtDate(patient.exam_date) %> · Referred by <%= patient.ref_doctor_name || '—' %>
+      · <% if (patient.is_free) { %><span class="badge badge-free">Free</span><% } else { %><span class="badge badge-paid">Rs. <%= patient.amount_received %></span><% } %>
+    </p>
+  </div>
+</div>
+
+<div class="section-label">Add a new report</div>
+<div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:36px;">
+  <a href="/patients/<%= patient.id %>/report/male/new?template=with_prostate" class="btn btn-outline btn-sm">+ Male Case (abdominal + prostate)</a>
+  <a href="/patients/<%= patient.id %>/report/male/new?template=without_prostate" class="btn btn-outline btn-sm">+ Female Case (abdominal)</a>
+  <a href="/patients/<%= patient.id %>/report/gynae/new" class="btn btn-outline btn-sm">+ Gynae Case</a>
+  <a href="/patients/<%= patient.id %>/report/obs/new" class="btn btn-outline btn-sm">+ Obs Case</a>
+</div>
+
+<div class="section-label">Report history</div>
+
+<% const allReports = [
+  ...maleReports.map(r => ({...r, kind:'Abdominal', href:`/reports/male/${r.id}/print`, editHref:`/reports/male/${r.id}/edit`})),
+  ...gynaeReports.map(r => ({...r, kind:'Gynae', href:`/reports/gynae/${r.id}/print`, editHref:`/reports/gynae/${r.id}/edit`})),
+  ...obsReports.map(r => ({...r, kind:'Obstetric', href:`/reports/obs/${r.id}/print`, editHref:`/reports/obs/${r.id}/edit`})),
+].sort((a,b) => new Date(b.created_at) - new Date(a.created_at)) %>
+
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Type</th><th>Created</th><th>Reported by</th><th></th><th></th></tr></thead>
+    <tbody>
+      <% if (allReports.length === 0) { %>
+        <tr><td colspan="5"><div class="empty-state"><h3>No reports yet</h3><p>Use the buttons above to create the first report for this patient.</p></div></td></tr>
+      <% } %>
+      <% allReports.forEach(r => { %>
+        <tr>
+          <td><%= r.kind %></td>
+          <td><%= fmtDate(r.created_at) %></td>
+          <td><%= r.radiologist || '—' %></td>
+          <td><a href="<%= r.href %>">View / print →</a></td>
+          <td><a href="<%= r.editHref %>">Edit</a></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('partials/footer') %>
