@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title><%= typeof title !== 'undefined' ? title + ' · AHUC' : 'AHUC Clinic System' %></title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -26,7 +26,36 @@
       <span><%= currentUser.full_name %> <em>(<%= currentUser.role %>)</em></span>
       <form action="/logout" method="post"><button type="submit" class="link-btn">Log out</button></form>
     </div>
+    <button type="button" class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="/">Dashboard</a>
+    <a href="/patients">Patients</a>
+    <a href="/patients/new">+ New patient</a>
+    <a href="/doctors">Referring doctors</a>
+    <% if (currentUser.role === 'admin') { %><a href="/users">Staff accounts</a><% } %>
+    <div class="mobile-nav-user">
+      <span><%= currentUser.full_name %> <em>(<%= currentUser.role %>)</em></span>
+      <form action="/logout" method="post"><button type="submit" class="link-btn">Log out</button></form>
+    </div>
+  </nav>
 </header>
+<script>
+  (function(){
+    var btn = document.getElementById('navToggle');
+    var panel = document.getElementById('mobileNav');
+    if (!btn || !panel) return;
+    btn.addEventListener('click', function(){
+      var open = panel.classList.toggle('open');
+      btn.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    panel.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', function(){ panel.classList.remove('open'); btn.classList.remove('open'); });
+    });
+  })();
+</script>
 <main class="app-main">
 <% } %>
