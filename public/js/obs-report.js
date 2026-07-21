@@ -118,6 +118,34 @@
     setOut('out_biometry', parts.length ? parts.join(', ') + '.' : '');
   }
 
+  /* ---------------- EDD (auto-calculated from biometry, manual override always wins) ---------------- */
+  function calcEDD() {
+    const examDateStr = form.dataset.examDate;
+    const eddInput = form.querySelector('[name="edd"]');
+    if (!examDateStr || !eddInput) return;
+    const examDate = new Date(examDateStr + 'T00:00:00');
+    if (isNaN(examDate.getTime())) return;
+
+    const crl = parseFloat(num('bio_crl', ''));   // cm
+    const gs = parseFloat(num('bio_gs', ''));      // mm
+    let gaDays = null;
+
+    if (!isNaN(crl) && crl > 0) {
+      // Robinson formula (CRL in mm -> gestational age in days), valid ~CRL 10-84mm
+      const crlMm = crl * 10;
+      gaDays = 8.052 * Math.sqrt(crlMm) + 23.73;
+    } else if (!isNaN(gs) && gs > 0) {
+      // Rough mean sac diameter rule of thumb, early first trimester only
+      gaDays = gs + 30;
+    }
+    if (gaDays === null || isNaN(gaDays)) return;
+
+    const daysRemaining = 280 - gaDays;
+    const edd = new Date(examDate.getTime() + daysRemaining * 24 * 60 * 60 * 1000);
+    if (isNaN(edd.getTime())) return;
+    eddInput.value = edd.toISOString().slice(0, 10);
+  }
+
   const generators = {
     gestation: genGestation,
     amniotic: genAmniotic,
@@ -136,4 +164,11 @@
       input.addEventListener('change', generate);
     });
   });
+
+  // Auto-calculate EDD only when the measurements that drive it change —
+  // never on the EDD field itself, so a manual edit is never clobbered.
+  const crlInput = form.querySelector('[name="bio_crl"]');
+  const gsInput = form.querySelector('[name="bio_gs"]');
+  if (crlInput) crlInput.addEventListener('change', calcEDD);
+  if (gsInput) gsInput.addEventListener('change', calcEDD);
 })();

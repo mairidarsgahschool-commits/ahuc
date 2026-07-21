@@ -8,7 +8,7 @@
   </div>
 </div>
 
-<form method="post" action="<%= editing ? `/reports/obs/${reportId}/edit` : `/patients/${patient.id}/report/obs` %>" id="obsForm">
+<form method="post" action="<%= editing ? `/reports/obs/${reportId}/edit` : `/patients/${patient.id}/report/obs` %>" id="obsForm" data-exam-date="<%= patient.exam_date %>">
 
 <!-- ============ GESTATION ============ -->
 <details class="organ" open data-organ="gestation">
@@ -194,7 +194,8 @@
       </div>
       <div class="finding-group">
         <h5>Expected date of delivery</h5>
-        <input type="date" name="edd" value="<%= data.edd || '' %>">
+        <input type="date" name="edd" id="edd_input" value="<%= data.edd || '' %>">
+        <div class="helptext" style="margin-top:6px;">Auto-calculated from crown-rump length (or gestational sac diameter) once entered — you can still adjust it manually.</div>
       </div>
     </div>
     <div class="generated-desc">

@@ -215,7 +215,11 @@ tr:hover td{background:#FAFCFB;}
 
 @media (max-width: 860px){
   .form-grid{grid-template-columns:1fr;}
-  .stat-grid{grid-template-columns:repeat(2,1fr);}
+  .stat-grid{grid-template-columns:1fr;}
+  .stat{display:flex; align-items:center; gap:14px; padding:16px 18px;}
+  .stat-icon{width:26px; height:26px; margin-bottom:0; flex-shrink:0;}
+  .stat .num{font-size:22px; line-height:1;}
+  .stat .label{margin-top:2px;}
   .rp-grid{grid-template-columns:1fr;}
   .case-picker{grid-template-columns:1fr 1fr;}
   .finding-grid{grid-template-columns:1fr;}
