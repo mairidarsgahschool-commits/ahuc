@@ -1,0 +1,76 @@
+<div class="report-doc" id="report-doc">
+
+  <div class="rp-letterhead">
+    <div class="rp-letterhead-text">
+      <div class="rp-clinic-name">Ali Hospital &amp; UltraSound Centre</div>
+      <div class="rp-clinic-addr">Thana Road Kot Addu.</div>
+      <div class="rp-clinic-phone">Phone: Off: 066-2242338<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Res: 066-2241258</div>
+    </div>
+    <% if (typeof qrDataUrl !== 'undefined' && qrDataUrl) { %>
+    <div class="rp-qr">
+      <img src="<%= qrDataUrl %>" alt="Scan to view this report online" width="76" height="76">
+      <span>Scan to view online</span>
+    </div>
+    <% } %>
+  </div>
+
+  <hr class="rp-rule">
+
+  <div class="rp-demo-row">
+    <span><b>Id:</b> <%= patient.id %></span>
+    <span><b>Name:</b> <%= patient.name %></span>
+    <span><b>Age:</b> <%= patient.age %></span>
+  </div>
+  <div class="rp-demo-row">
+    <span><b>Sex:</b> <%= patient.sex %></span>
+    <span><b>Date:</b> <%= fmtDate(patient.exam_date) %></span>
+    <span><b>Referred By:</b> <%= patient.ref_doctor_name || 'Self' %></span>
+  </div>
+
+  <hr class="rp-rule">
+
+  <% if (typeof report.liver !== 'undefined') { %>
+    <div class="rp-row"><span class="rp-row-label">Liver:</span><span class="rp-row-val"><%= report.liver %></span></div>
+    <div class="rp-row"><span class="rp-row-label">Gall Bladder:</span><span class="rp-row-val"><%= report.gall_bladder %></span></div>
+    <div class="rp-row"><span class="rp-row-label">Pancreas:</span><span class="rp-row-val"><%= report.pancreas %></span></div>
+    <div class="rp-row"><span class="rp-row-label">Spleen:</span><span class="rp-row-val"><%= report.spleen %></span></div>
+    <div class="rp-row"><span class="rp-row-label">Right Kidney:</span><span class="rp-row-val"><%= report.kidney_r %></span></div>
+    <div class="rp-row"><span class="rp-row-label">Left Kidney:</span><span class="rp-row-val"><%= report.kidney_l %></span></div>
+    <div class="rp-row"><span class="rp-row-label">Urinary Bladder:</span><span class="rp-row-val"><%= report.urinary_bladder %></span></div>
+    <% if (report.has_prostate && report.prostate) { %>
+      <div class="rp-row"><span class="rp-row-label">Prostate:</span><span class="rp-row-val"><%= report.prostate %></span></div>
+    <% } %>
+    <div class="rp-row"><span class="rp-row-label">Others:</span><span class="rp-row-val"><%= report.others %></span></div>
+  <% } %>
+
+  <% if (typeof report.uterus !== 'undefined') { %>
+    <div class="rp-row"><span class="rp-row-label">Uterus:</span><span class="rp-row-val"><%= report.uterus %></span></div>
+    <div class="rp-row"><span class="rp-row-label">Right Adnexa:</span><span class="rp-row-val"><%= report.adnexa_r %></span></div>
+    <div class="rp-row"><span class="rp-row-label">Left Adnexa:</span><span class="rp-row-val"><%= report.adnexa_l %></span></div>
+    <div class="rp-row"><span class="rp-row-label">Rt. Ovary:</span><span class="rp-row-val"><%= report.ovary_r %></span></div>
+    <div class="rp-row"><span class="rp-row-label">Lt. Ovary:</span><span class="rp-row-val"><%= report.ovary_l %></span></div>
+    <div class="rp-row"><span class="rp-row-label">Pouch of Douglas:</span><span class="rp-row-val"><%= report.pouch_douglas %></span></div>
+  <% } %>
+
+  <% if (typeof report.gestation !== 'undefined') { %>
+    <div class="rp-row"><span class="rp-row-label">Gestation:</span><span class="rp-row-val"><%= report.gestation %></span></div>
+    <div class="rp-row"><span class="rp-row-label">Amniotic Fluid:</span><span class="rp-row-val"><%= report.amniotic_fluid %></span></div>
+    <div class="rp-row"><span class="rp-row-label">Placenta:</span><span class="rp-row-val"><%= report.placenta %></span></div>
+    <div class="rp-row"><span class="rp-row-label">C.V.S:</span><span class="rp-row-val"><%= report.cvs %></span></div>
+    <div class="rp-row"><span class="rp-row-label">Lie:</span><span class="rp-row-val"><%= report.lie %></span></div>
+    <div class="rp-row"><span class="rp-row-label">Fetal Morphology:</span><span class="rp-row-val"><%= report.fetal_morphology %></span></div>
+    <% if (report.biometry) { %><div class="rp-row"><span class="rp-row-label">Biometry:</span><span class="rp-row-val"><%= report.biometry %></span></div><% } %>
+    <% if (report.edd) { %><div class="rp-row"><span class="rp-row-label">Expected Date of Delivery:</span><span class="rp-row-val"><%= fmtDate(report.edd) %></span></div><% } %>
+  <% } %>
+
+  <div class="rp-row"><span class="rp-row-label">Remarks:</span><span class="rp-row-val"><%= report.remarks %></span></div>
+
+  <hr class="rp-rule rp-rule-footer">
+
+  <div class="rp-footer">
+    <span class="rp-footer-date"><%= fmtDateLong(report.created_at) %></span>
+    <span class="rp-footer-doctor"><%= report.radiologist || '—' %></span>
+    <span class="rp-footer-time"><%= fmtTime(report.created_at) %></span>
+  </div>
+
+</div>

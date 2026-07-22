@@ -49,11 +49,28 @@
 
     if (val('liver_mass') === 'present') {
       const kind = selVal('liver_mass_kind');
-      const noun = kind === 'cyst' ? 'A simple, well-defined anechoic cyst' : 'A solid mass';
-      sentences.push(`${noun} is seen in the ${selVal('liver_mass_location')}, measuring ${num('liver_mass_w', 0)} x ${num('liver_mass_h', 0)} mm.`);
+      const nouns = {
+        cyst: 'A simple, well-defined anechoic cyst',
+        solid: 'A solid mass',
+        hemangioma: 'A well-defined hyperechoic lesion, in keeping with a hemangioma,',
+        abscess: 'A hypoechoic collection, in keeping with an abscess,',
+        hydatid: 'A cystic lesion with septations, in keeping with a hydatid cyst,'
+      };
+      sentences.push(`${nouns[kind] || 'A lesion'} is seen in the ${selVal('liver_mass_location')}, measuring ${num('liver_mass_w', 0)} x ${num('liver_mass_h', 0)} mm.`);
     } else {
       sentences.push('No mass or cyst seen in it.');
     }
+
+    const disease = val('liver_disease');
+    const diseaseText = {
+      cirrhosis: 'Liver shows a nodular, coarsened contour with irregular surface, in keeping with cirrhotic change.',
+      hepatomegaly: 'Liver is diffusely enlarged, in keeping with hepatomegaly.',
+      hemangioma: 'A hyperechoic lesion is noted, in keeping with a hepatic hemangioma.',
+      abscess: 'A hypoechoic collection is noted, in keeping with a hepatic abscess.',
+      hydatid: 'A well-defined cystic lesion with internal septations is noted, in keeping with a hydatid cyst.',
+      calcification: 'Scattered calcific foci are noted within the liver parenchyma.'
+    };
+    if (disease && disease !== 'none' && diseaseText[disease]) sentences.push(diseaseText[disease]);
 
     const bile = val('liver_bile_ducts'), vessels = val('liver_vessels');
     if (bile === 'normal' && vessels === 'normal') {

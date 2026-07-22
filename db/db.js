@@ -81,4 +81,16 @@ CREATE TABLE IF NOT EXISTS templates (
 );
 `);
 
+// --- Migration: add share_token to report tables (added after initial release) ---
+function ensureColumn(table, column, definition) {
+  const cols = db.prepare(`PRAGMA table_info(${table})`).all().map(c => c.name);
+  if (!cols.includes(column)) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  }
+}
+for (const table of ['male_reports', 'gynae_reports', 'obs_reports']) {
+  ensureColumn(table, 'share_token', 'TEXT');
+  db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_${table}_share_token ON ${table}(share_token)`);
+}
+
 module.exports = { db, isNew };

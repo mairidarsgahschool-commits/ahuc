@@ -1,22 +1,24 @@
-<%- include('partials/header', { title: (editing ? 'Edit report' : (hasProstate ? 'Male Case' : 'Female Case')) + ' — ' + patient.name }) %>
+<%- include('partials/header', { title: (editing ? 'Edit report' : (patient.sex === 'Male' ? 'Male Case' : 'Female Case')) + ' — ' + patient.name }) %>
 
 <div class="page-head">
   <div>
-    <span class="eyebrow">Patient #<%= patient.id %> · <%= patient.name %> · <%= hasProstate ? 'Male Case' : 'Female Case' %></span>
+    <span class="eyebrow">Patient #<%= patient.id %> · <%= patient.name %> · <%= patient.sex === 'Male' ? 'Male Case' : 'Female Case' %></span>
     <h1><%= editing ? 'Edit abdominal ultrasound report' : 'Abdominal ultrasound — organ findings' %></h1>
     <p>Each organ opens with the normal-report template already filled in. Adjust the structured findings and the description updates itself — you can also edit the description text directly before saving.</p>
   </div>
 </div>
 
-<% if (!editing) { %>
+<% if (!editing && patient.sex === 'Male') { %>
 <div class="template-picker no-print">
-  <a href="/patients/<%= patient.id %>/report/male/new?template=without_prostate" class="<%= !hasProstate ? 'active' : '' %>">Female Case</a>
-  <a href="/patients/<%= patient.id %>/report/male/new?template=with_prostate" class="<%= hasProstate ? 'active' : '' %>">Male Case</a>
+  <a href="/patients/<%= patient.id %>/report/male/new?template=without_prostate" class="<%= !hasProstate ? 'active' : '' %>">Without prostate section</a>
+  <a href="/patients/<%= patient.id %>/report/male/new?template=with_prostate" class="<%= hasProstate ? 'active' : '' %>">With prostate section</a>
 </div>
+<p class="helptext no-print" style="margin-top:-16px;">Prostate findings are included automatically for patients aged 12 and over — switch this if that doesn't apply here.</p>
 <% } %>
 
 <form method="post" action="<%= editing ? `/reports/male/${reportId}/edit` : `/patients/${patient.id}/report/male` %>" id="organForm">
 <input type="hidden" name="has_prostate" value="<%= hasProstate ? '1' : '0' %>">
+
 
 <!-- ============ LIVER ============ -->
 <details class="organ" data-organ="liver">
@@ -45,6 +47,16 @@
         <div class="radio-row"><input type="radio" name="liver_echo" value="hypo"> <label>HypoEchogenic</label></div>
         <div class="radio-row"><input type="radio" name="liver_echo" value="nocomments"> <label>No comments</label></div>
       </div>
+      <div class="finding-group">
+        <h5>Named conditions</h5>
+        <div class="radio-row"><input type="radio" name="liver_disease" value="none" checked> <label>None</label></div>
+        <div class="radio-row"><input type="radio" name="liver_disease" value="cirrhosis"> <label>Cirrhosis</label></div>
+        <div class="radio-row"><input type="radio" name="liver_disease" value="hepatomegaly"> <label>Hepatomegaly</label></div>
+        <div class="radio-row"><input type="radio" name="liver_disease" value="hemangioma"> <label>Hemangioma</label></div>
+        <div class="radio-row"><input type="radio" name="liver_disease" value="abscess"> <label>Liver abscess</label></div>
+        <div class="radio-row"><input type="radio" name="liver_disease" value="hydatid"> <label>Hydatid cyst</label></div>
+        <div class="radio-row"><input type="radio" name="liver_disease" value="calcification"> <label>Calcification</label></div>
+      </div>
     </div>
     <div class="finding-grid">
       <div class="finding-group">
@@ -52,7 +64,7 @@
         <div class="radio-row"><input type="radio" name="liver_mass" value="none" checked> <label>None seen</label></div>
         <div class="radio-row"><input type="radio" name="liver_mass" value="present"> <label>Present</label></div>
         <div class="sub-inputs">
-          <select name="liver_mass_kind"><option value="cyst">simple cyst</option><option value="solid">solid mass</option></select>
+          <select name="liver_mass_kind"><option value="cyst">simple cyst</option><option value="solid">solid mass</option><option value="hemangioma">hemangioma</option><option value="abscess">abscess</option><option value="hydatid">hydatid cyst</option></select>
           <select name="liver_mass_location"><option value="right lobe">right lobe</option><option value="left lobe">left lobe</option><option value="segment">mid segment</option></select>
         </div>
         <div class="sub-inputs">

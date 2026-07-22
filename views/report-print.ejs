@@ -8,71 +8,15 @@
   </div>
 </div>
 
-<div class="report-doc" id="report-doc">
-  <div class="report-letterhead">
-    <div>
-      <div class="lh-brand">Ali Hospital &amp; Ultra Sound Centre</div>
-      <div class="lh-sub">THANA ROAD, KOT ADDU · OFF: 066-2242338 · RES: 066-2241258</div>
-    </div>
-    <div class="lh-meta">
-      REPORT DATE &nbsp; <%= fmtDate(report.created_at) %><br>
-      PATIENT SERIAL NO. &nbsp; #<%= patient.id %>
-    </div>
-  </div>
+<div class="report-page-wrap">
+  <%- include('partials/report-body', { report, patient, type, qrDataUrl }) %>
+</div>
 
-  <div class="report-title"><%= type %></div>
-  <div class="report-sub">Ultrasound report · confidential</div>
-
-  <div class="rp-grid">
-    <div><span class="rp-label">Id</span><span class="rp-val">#<%= patient.id %></span></div>
-    <div><span class="rp-label">Name</span><span class="rp-val"><%= patient.name %></span></div>
-    <div><span class="rp-label">Age</span><span class="rp-val"><%= patient.age %></span></div>
-    <div><span class="rp-label">Sex</span><span class="rp-val"><%= patient.sex %></span></div>
-    <div><span class="rp-label">Date</span><span class="rp-val"><%= fmtDate(patient.exam_date) %></span></div>
-    <div><span class="rp-label">Referred by</span><span class="rp-val"><%= patient.ref_doctor_name || 'Self' %></span></div>
-    <% if (report.edd) { %>
-    <div><span class="rp-label">Estimated date of delivery</span><span class="rp-val"><%= fmtDate(report.edd) %></span></div>
-    <% } %>
-  </div>
-
-  <% if (typeof report.liver !== 'undefined') { %>
-    <div class="rp-section"><h4>Liver</h4><p><%= report.liver %></p></div>
-    <div class="rp-section"><h4>Gall bladder</h4><p><%= report.gall_bladder %></p></div>
-    <div class="rp-section"><h4>Pancreas</h4><p><%= report.pancreas %></p></div>
-    <div class="rp-section"><h4>Spleen</h4><p><%= report.spleen %></p></div>
-    <div class="rp-section"><h4>Right kidney</h4><p><%= report.kidney_r %></p></div>
-    <div class="rp-section"><h4>Left kidney</h4><p><%= report.kidney_l %></p></div>
-    <div class="rp-section"><h4>Urinary bladder</h4><p><%= report.urinary_bladder %></p></div>
-    <% if (report.has_prostate && report.prostate) { %>
-      <div class="rp-section"><h4>Prostate</h4><p><%= report.prostate %></p></div>
-    <% } %>
-    <div class="rp-section"><h4>Others</h4><p><%= report.others %></p></div>
-  <% } %>
-
-  <% if (typeof report.uterus !== 'undefined') { %>
-    <div class="rp-section"><h4>Uterus</h4><p><%= report.uterus %></p></div>
-    <div class="rp-section"><h4>Left adnexa</h4><p><%= report.adnexa_l %></p></div>
-    <div class="rp-section"><h4>Right adnexa</h4><p><%= report.adnexa_r %></p></div>
-    <div class="rp-section"><h4>Left ovary</h4><p><%= report.ovary_l %></p></div>
-    <div class="rp-section"><h4>Right ovary</h4><p><%= report.ovary_r %></p></div>
-    <div class="rp-section"><h4>Pouch of Douglas</h4><p><%= report.pouch_douglas %></p></div>
-  <% } %>
-
-  <% if (typeof report.gestation !== 'undefined') { %>
-    <div class="rp-section"><h4>Gestation</h4><p><%= report.gestation %></p></div>
-    <div class="rp-section"><h4>Amniotic fluid</h4><p><%= report.amniotic_fluid %></p></div>
-    <div class="rp-section"><h4>Placenta</h4><p><%= report.placenta %></p></div>
-    <div class="rp-section"><h4>Fetal cardiovascular system</h4><p><%= report.cvs %></p></div>
-    <div class="rp-section"><h4>Lie / presentation</h4><p><%= report.lie %></p></div>
-    <div class="rp-section"><h4>Fetal morphology</h4><p><%= report.fetal_morphology %></p></div>
-    <% if (report.biometry) { %><div class="rp-section"><h4>Biometry</h4><p><%= report.biometry %></p></div><% } %>
-  <% } %>
-
-  <div class="rp-section"><h4>Remarks / impression</h4><p><%= report.remarks %></p></div>
-
-  <div class="rp-signoff">
-    <div><strong><%= report.sonographer || '—' %></strong>Sonographer performing exam</div>
-    <div><strong><%= report.radiologist || '—' %></strong>Reporting radiologist</div>
+<div class="share-box no-print">
+  <div class="share-box-label">Public view link (no login needed) — this QR code is printed on the report above</div>
+  <div class="share-box-row">
+    <input type="text" readonly value="<%= shareUrl %>" id="shareUrlInput" onclick="this.select()">
+    <button type="button" class="btn btn-outline btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('shareUrlInput').value); this.textContent='Copied!'; setTimeout(() => this.textContent='Copy link', 1500);">Copy link</button>
   </div>
 </div>
 

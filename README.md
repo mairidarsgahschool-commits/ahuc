@@ -16,6 +16,27 @@ a real database and logins.
   echotexture, stones, dilation, etc.). Selecting a finding live-updates a plain-English
   description underneath — exactly like the old "Edit UpToDate Description" box — and that text
   remains directly editable before saving.
+- **Report layout matches the old system exactly** — plain letterhead, two-row patient
+  demographics (Id/Name/Age, then Sex/Date/Referred By), each organ as a label:
+  description line, and a footer with the report date, reporting doctor, and time —
+  all sized to true A4 portrait, both on screen and when printed.
+- **Age-aware Male Case** — patients under 12 automatically get the abdominal report
+  without a prostate section; 12 and over get it included. Still manually switchable
+  on the report form for edge cases.
+- **Three-tier obstetric biometry**, matching the old system's own categories:
+  Gestational Sac Diameter (~weeks 1–9), Crown-Rump Length (~weeks 10–11), and
+  Bi-Parietal Diameter (12+ weeks) each drive their own gestational-age formula and
+  auto-calculate the Expected Date of Delivery — shown as its own report line, not
+  folded into another section, matching the original layout.
+- **Broader liver findings** — beyond the size/parenchyma/mass fields, a dedicated
+  "Named conditions" picker covers cirrhosis, hepatomegaly, hemangioma, abscess,
+  hydatid cyst, and calcification, on top of the fatty liver (steatosis) option
+  already in place. Nothing existing was removed — these are additions.
+- **QR code + shareable link on every report** — each report gets its own unguessable
+  link (`/share/<type>/<token>`), rendered as a QR code right on the printed report.
+  Scanning it opens a clean, read-only, no-login copy of that one report — nothing
+  else in the system is reachable from that link. The link is also shown as plain
+  text under the report for copy/paste (e.g. to text or WhatsApp to a patient).
 - **Login / staff accounts** — role-based (`admin`, `radiologist`, `sonographer`, `staff`).
   Only admins can create or remove accounts.
 - **Patients** — register, search, view history. Tracks age, sex, exam date, referring

@@ -109,13 +109,47 @@
   }
 
   /* ---------------- BIOMETRY ---------------- */
+  // Matches the old system's wording: state the measurement, then the estimated age.
+  // (EDD itself is shown as its own report line, not folded into this text.)
   function genBiometry() {
-    const gs = num('bio_gs', null), crl = num('bio_crl', null), bpd = num('bio_bpd', null);
+    const gs = parseFloat(num('bio_gs', ''));    // mm
+    const crl = parseFloat(num('bio_crl', ''));  // cm
+    const bpd = parseFloat(num('bio_bpd', ''));  // mm
+
     const parts = [];
-    if (gs) parts.push(`Gestational sac diameter ${gs} mm`);
-    if (crl) parts.push(`crown-rump length ${crl} cm`);
-    if (bpd) parts.push(`bi-parietal diameter ${bpd} mm`);
-    setOut('out_biometry', parts.length ? parts.join(', ') + '.' : '');
+    if (!isNaN(bpd) && bpd > 0) {
+      const gaWeeks = (gestAgeDaysFromBPD(bpd) / 7).toFixed(1);
+      parts.push(`B.P.D is ${bpd} mm.  Age is about ${gaWeeks} weeks.`);
+    }
+    if (!isNaN(crl) && crl > 0) {
+      const gaWeeks = (gestAgeDaysFromCRL(crl) / 7).toFixed(1);
+      parts.push(`Crown-rump length is ${crl} cm, age is about ${gaWeeks} weeks.`);
+    }
+    if (!isNaN(gs) && gs > 0) {
+      const gaWeeks = (gestAgeDaysFromGS(gs) / 7).toFixed(1);
+      parts.push(`Gestational sac diameter is ${gs} mm, age is about ${gaWeeks} weeks.`);
+    }
+    setOut('out_biometry', parts.join('  '));
+  }
+
+  /* ---------------- Gestational age formulas ---------------- */
+  // Diameter of Gestational Sac — very early pregnancy (roughly weeks 1–9),
+  // mean sac diameter rule of thumb: GA(days) ≈ MSD(mm) + 30.
+  function gestAgeDaysFromGS(gsMm) {
+    return gsMm + 30;
+  }
+  // Crown-Rump Length — roughly weeks 10–11 dating window,
+  // Robinson formula: GA(days) = 8.052 x sqrt(CRL in mm) + 23.73.
+  function gestAgeDaysFromCRL(crlCm) {
+    const crlMm = crlCm * 10;
+    return 8.052 * Math.sqrt(crlMm) + 23.73;
+  }
+  // Bi-Parietal Diameter — later pregnancy (roughly 11+ weeks),
+  // Hadlock BPD-only regression: GA(weeks) = 9.54 + 1.482*BPD(cm) + 0.1676*BPD(cm)^2.
+  function gestAgeDaysFromBPD(bpdMm) {
+    const bpdCm = bpdMm / 10;
+    const gaWeeks = 9.54 + 1.482 * bpdCm + 0.1676 * bpdCm * bpdCm;
+    return gaWeeks * 7;
   }
 
   /* ---------------- EDD (auto-calculated from biometry, manual override always wins) ---------------- */
@@ -126,17 +160,19 @@
     const examDate = new Date(examDateStr + 'T00:00:00');
     if (isNaN(examDate.getTime())) return;
 
-    const crl = parseFloat(num('bio_crl', ''));   // cm
-    const gs = parseFloat(num('bio_gs', ''));      // mm
+    const gs = parseFloat(num('bio_gs', ''));
+    const crl = parseFloat(num('bio_crl', ''));
+    const bpd = parseFloat(num('bio_bpd', ''));
     let gaDays = null;
 
-    if (!isNaN(crl) && crl > 0) {
-      // Robinson formula (CRL in mm -> gestational age in days), valid ~CRL 10-84mm
-      const crlMm = crl * 10;
-      gaDays = 8.052 * Math.sqrt(crlMm) + 23.73;
+    // Later measurements take priority when more than one is filled in, since
+    // that's the one actually usable at this stage of the pregnancy.
+    if (!isNaN(bpd) && bpd > 0) {
+      gaDays = gestAgeDaysFromBPD(bpd);
+    } else if (!isNaN(crl) && crl > 0) {
+      gaDays = gestAgeDaysFromCRL(crl);
     } else if (!isNaN(gs) && gs > 0) {
-      // Rough mean sac diameter rule of thumb, early first trimester only
-      gaDays = gs + 30;
+      gaDays = gestAgeDaysFromGS(gs);
     }
     if (gaDays === null || isNaN(gaDays)) return;
 
@@ -144,6 +180,7 @@
     const edd = new Date(examDate.getTime() + daysRemaining * 24 * 60 * 60 * 1000);
     if (isNaN(edd.getTime())) return;
     eddInput.value = edd.toISOString().slice(0, 10);
+    genBiometry(); // keep the findings text in sync with the freshly calculated date
   }
 
   const generators = {
