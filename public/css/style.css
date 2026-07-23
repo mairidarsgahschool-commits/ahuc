@@ -176,25 +176,32 @@ tr:hover td{background:#FAFCFB;}
   box-shadow:0 8px 24px -14px rgba(14,42,48,0.2);
   box-sizing:border-box;
   font-family:'Georgia', 'Times New Roman', serif; color:#1a1a1a;
+  display:flex; flex-direction:column;
 }
 .rp-letterhead{display:flex; justify-content:space-between; align-items:flex-start; gap:16px;}
-.rp-clinic-name{font-family:'Fraunces',serif; font-weight:600; font-size:19px; color:#111;}
-.rp-clinic-addr{font-size:12.5px; font-style:italic; color:#333; margin-top:2px;}
-.rp-clinic-phone{font-size:11.5px; color:#333; margin-top:6px; line-height:1.5;}
-.rp-qr{display:flex; flex-direction:column; align-items:center; gap:4px; flex-shrink:0;}
-.rp-qr img{display:block; border:1px solid var(--line); border-radius:3px;}
-.rp-qr span{font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--text-soft); text-transform:uppercase; letter-spacing:.03em; text-align:center; max-width:88px;}
+.rp-clinic-name{font-family:'Fraunces',serif; font-weight:600; font-size:26px; color:#111;}
+.rp-clinic-addr{font-size:15px; font-style:italic; color:#333; margin-top:3px;}
+.rp-clinic-phone{font-size:13.5px; color:#333; margin-top:8px; line-height:1.6;}
 
 .rp-rule{border:none; border-top:1px solid #333; margin:10px 0 12px;}
-.rp-rule-footer{border-top:1px solid #ccc; margin-top:28px;}
+.rp-rule-footer{border-top:1px solid #ccc; margin-top:0;}
 
-.rp-demo-row{display:flex; gap:44px; margin-bottom:5px; font-size:12.5px; color:#1a1a1a;}
+.rp-demo{margin-bottom:0;}
+.rp-demo-row{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:7px; font-size:13px; color:#1a1a1a;}
 .rp-demo-row b{font-weight:700;}
 
-.rp-row{display:flex; gap:16px; margin-bottom:15px; font-size:12.5px; line-height:1.55;}
+.rp-content{flex:1 0 auto;}
+.rp-row{display:flex; gap:16px; margin-bottom:26px; font-size:13px; line-height:1.6;}
 .rp-row-label{flex:0 0 130px; font-weight:700; color:#111;}
 .rp-row-val{flex:1; color:#1a1a1a; white-space:pre-wrap;}
 
+/* QR sits at the bottom of the page, above the sign-off footer */
+.rp-qr-block{margin-top:auto; padding-top:16px; display:flex; justify-content:center;}
+.rp-qr{display:flex; flex-direction:column; align-items:center; gap:5px;}
+.rp-qr img{display:block; border:1px solid var(--line); border-radius:3px;}
+.rp-qr span{font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text-soft); text-transform:uppercase; letter-spacing:.03em; text-align:center;}
+
+.rp-footer-block{margin-top:16px;}
 .rp-footer{display:flex; justify-content:space-between; align-items:baseline; margin-top:14px; font-size:11.5px; color:#333;}
 .rp-footer-date{font-style:italic;}
 .rp-footer-doctor{font-family:'Fraunces',serif; font-weight:600; font-style:italic; font-size:13.5px; color:#111;}
@@ -310,5 +317,5 @@ tr:hover td{background:#FAFCFB;}
   body{background:#fff;}
   .app-main{padding:0; max-width:none;}
   .report-page-wrap{overflow:visible; padding:0;}
-  .report-doc{box-shadow:none; border:none; margin:0; width:auto; min-height:0;}
+  .report-doc{box-shadow:none; border:none; margin:0; width:auto; min-height:297mm;}
 }

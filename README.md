@@ -16,18 +16,24 @@ a real database and logins.
   echotexture, stones, dilation, etc.). Selecting a finding live-updates a plain-English
   description underneath — exactly like the old "Edit UpToDate Description" box — and that text
   remains directly editable before saving.
-- **Report layout matches the old system exactly** — plain letterhead, two-row patient
-  demographics (Id/Name/Age, then Sex/Date/Referred By), each organ as a label:
-  description line, and a footer with the report date, reporting doctor, and time —
-  all sized to true A4 portrait, both on screen and when printed.
+- **Report layout matches the old system exactly** — plain letterhead (large clinic
+  name/address/phone), two-row patient demographics aligned in even columns
+  (Id/Name/Age, then Sex/Date/Referred By), each organ as a label: description line
+  with generous spacing, a QR code near the bottom of the page, and a footer —
+  pinned to the bottom of the page itself, not just the content — with the report
+  date, reporting doctor, and time. Sized to true A4 portrait, both on screen and print.
+- **Obstetric biometry now mirrors the old system's own workflow**: pick exactly one
+  measurement method (Gestational Sac Diameter ~weeks 1–9, Crown-Rump Length ~weeks
+  10–11, or Bi-Parietal Diameter 12+ weeks) — the other two fields are disabled,
+  matching the legacy tool's mutually-exclusive radio buttons. The Crown-Rump Length
+  formula was corrected to `GA(days) = CRL(mm) + 42`, verified against a real
+  printed report from the old system (CRL 3.5cm → 11.0 weeks → EDD Feb 9, 2027 —
+  exact match). The Bi-Parietal Diameter formula is a standard published regression,
+  not a verified match to the old system's exact internal calculation — treat it as
+  a close approximation rather than guaranteed parity.
 - **Age-aware Male Case** — patients under 12 automatically get the abdominal report
   without a prostate section; 12 and over get it included. Still manually switchable
   on the report form for edge cases.
-- **Three-tier obstetric biometry**, matching the old system's own categories:
-  Gestational Sac Diameter (~weeks 1–9), Crown-Rump Length (~weeks 10–11), and
-  Bi-Parietal Diameter (12+ weeks) each drive their own gestational-age formula and
-  auto-calculate the Expected Date of Delivery — shown as its own report line, not
-  folded into another section, matching the original layout.
 - **Broader liver findings** — beyond the size/parenchyma/mass fields, a dedicated
   "Named conditions" picker covers cirrhosis, hepatomegaly, hemangioma, abscess,
   hydatid cyst, and calcification, on top of the fatty liver (steatosis) option

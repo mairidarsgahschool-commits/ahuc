@@ -6,29 +6,26 @@
       <div class="rp-clinic-addr">Thana Road Kot Addu.</div>
       <div class="rp-clinic-phone">Phone: Off: 066-2242338<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Res: 066-2241258</div>
     </div>
-    <% if (typeof qrDataUrl !== 'undefined' && qrDataUrl) { %>
-    <div class="rp-qr">
-      <img src="<%= qrDataUrl %>" alt="Scan to view this report online" width="76" height="76">
-      <span>Scan to view online</span>
+  </div>
+
+  <hr class="rp-rule">
+
+  <div class="rp-demo">
+    <div class="rp-demo-row">
+      <span><b>Id:</b> <%= patient.id %></span>
+      <span><b>Name:</b> <%= patient.name %></span>
+      <span><b>Age:</b> <%= patient.age %></span>
     </div>
-    <% } %>
+    <div class="rp-demo-row">
+      <span><b>Sex:</b> <%= patient.sex %></span>
+      <span><b>Date:</b> <%= fmtDate(patient.exam_date) %></span>
+      <span><b>Referred By:</b> <%= patient.ref_doctor_name || 'Self' %></span>
+    </div>
   </div>
 
   <hr class="rp-rule">
 
-  <div class="rp-demo-row">
-    <span><b>Id:</b> <%= patient.id %></span>
-    <span><b>Name:</b> <%= patient.name %></span>
-    <span><b>Age:</b> <%= patient.age %></span>
-  </div>
-  <div class="rp-demo-row">
-    <span><b>Sex:</b> <%= patient.sex %></span>
-    <span><b>Date:</b> <%= fmtDate(patient.exam_date) %></span>
-    <span><b>Referred By:</b> <%= patient.ref_doctor_name || 'Self' %></span>
-  </div>
-
-  <hr class="rp-rule">
-
+  <div class="rp-content">
   <% if (typeof report.liver !== 'undefined') { %>
     <div class="rp-row"><span class="rp-row-label">Liver:</span><span class="rp-row-val"><%= report.liver %></span></div>
     <div class="rp-row"><span class="rp-row-label">Gall Bladder:</span><span class="rp-row-val"><%= report.gall_bladder %></span></div>
@@ -64,13 +61,25 @@
   <% } %>
 
   <div class="rp-row"><span class="rp-row-label">Remarks:</span><span class="rp-row-val"><%= report.remarks %></span></div>
+  </div>
 
-  <hr class="rp-rule rp-rule-footer">
+  <% if (typeof qrDataUrl !== 'undefined' && qrDataUrl) { %>
+  <div class="rp-qr-block">
+    <div class="rp-qr">
+      <img src="<%= qrDataUrl %>" alt="Scan to view this report online" width="86" height="86">
+      <span>Scan to view online</span>
+    </div>
+  </div>
+  <% } %>
 
-  <div class="rp-footer">
-    <span class="rp-footer-date"><%= fmtDateLong(report.created_at) %></span>
-    <span class="rp-footer-doctor"><%= report.radiologist || '—' %></span>
-    <span class="rp-footer-time"><%= fmtTime(report.created_at) %></span>
+  <div class="rp-footer-block">
+    <hr class="rp-rule rp-rule-footer">
+    <div class="rp-footer">
+      <span class="rp-footer-date"><%= fmtDateLong(report.created_at) %></span>
+      <span class="rp-footer-doctor"><%= report.radiologist || '—' %></span>
+      <span class="rp-footer-time"><%= fmtTime(report.created_at) %></span>
+    </div>
   </div>
 
 </div>
+

@@ -111,25 +111,34 @@
   /* ---------------- BIOMETRY ---------------- */
   // Matches the old system's wording: state the measurement, then the estimated age.
   // (EDD itself is shown as its own report line, not folded into this text.)
+  function activeBioMethod() {
+    return val('bio_method') || 'crl';
+  }
   function genBiometry() {
-    const gs = parseFloat(num('bio_gs', ''));    // mm
-    const crl = parseFloat(num('bio_crl', ''));  // cm
-    const bpd = parseFloat(num('bio_bpd', ''));  // mm
-
-    const parts = [];
-    if (!isNaN(bpd) && bpd > 0) {
-      const gaWeeks = (gestAgeDaysFromBPD(bpd) / 7).toFixed(1);
-      parts.push(`B.P.D is ${bpd} mm.  Age is about ${gaWeeks} weeks.`);
+    const method = activeBioMethod();
+    if (method === 'bpd') {
+      const bpd = parseFloat(num('bio_bpd', ''));
+      if (!isNaN(bpd) && bpd > 0) {
+        const gaWeeks = (gestAgeDaysFromBPD(bpd) / 7).toFixed(1);
+        setOut('out_biometry', `B.P.D is ${bpd} mm.  Age is about ${gaWeeks} weeks.`);
+        return;
+      }
+    } else if (method === 'crl') {
+      const crl = parseFloat(num('bio_crl', ''));
+      if (!isNaN(crl) && crl > 0) {
+        const gaWeeks = (gestAgeDaysFromCRL(crl) / 7).toFixed(1);
+        setOut('out_biometry', `Crown-rump Length is ${crl} cm., age is about ${gaWeeks} weeks.`);
+        return;
+      }
+    } else if (method === 'gs') {
+      const gs = parseFloat(num('bio_gs', ''));
+      if (!isNaN(gs) && gs > 0) {
+        const gaWeeks = (gestAgeDaysFromGS(gs) / 7).toFixed(1);
+        setOut('out_biometry', `Gestational sac diameter is ${gs} mm, age is about ${gaWeeks} weeks.`);
+        return;
+      }
     }
-    if (!isNaN(crl) && crl > 0) {
-      const gaWeeks = (gestAgeDaysFromCRL(crl) / 7).toFixed(1);
-      parts.push(`Crown-rump length is ${crl} cm, age is about ${gaWeeks} weeks.`);
-    }
-    if (!isNaN(gs) && gs > 0) {
-      const gaWeeks = (gestAgeDaysFromGS(gs) / 7).toFixed(1);
-      parts.push(`Gestational sac diameter is ${gs} mm, age is about ${gaWeeks} weeks.`);
-    }
-    setOut('out_biometry', parts.join('  '));
+    setOut('out_biometry', '');
   }
 
   /* ---------------- Gestational age formulas ---------------- */
@@ -138,14 +147,16 @@
   function gestAgeDaysFromGS(gsMm) {
     return gsMm + 30;
   }
-  // Crown-Rump Length — roughly weeks 10–11 dating window,
-  // Robinson formula: GA(days) = 8.052 x sqrt(CRL in mm) + 23.73.
+  // Crown-Rump Length — roughly weeks 10–11 dating window.
+  // Simple linear rule of thumb: GA(days) = CRL(mm) + 42.
   function gestAgeDaysFromCRL(crlCm) {
     const crlMm = crlCm * 10;
-    return 8.052 * Math.sqrt(crlMm) + 23.73;
+    return crlMm + 42;
   }
   // Bi-Parietal Diameter — later pregnancy (roughly 11+ weeks),
   // Hadlock BPD-only regression: GA(weeks) = 9.54 + 1.482*BPD(cm) + 0.1676*BPD(cm)^2.
+  // Note: this is a standard published formula, not a verified match to any
+  // specific legacy tool's internal calculation — treat as an approximation.
   function gestAgeDaysFromBPD(bpdMm) {
     const bpdCm = bpdMm / 10;
     const gaWeeks = 9.54 + 1.482 * bpdCm + 0.1676 * bpdCm * bpdCm;
@@ -160,19 +171,17 @@
     const examDate = new Date(examDateStr + 'T00:00:00');
     if (isNaN(examDate.getTime())) return;
 
-    const gs = parseFloat(num('bio_gs', ''));
-    const crl = parseFloat(num('bio_crl', ''));
-    const bpd = parseFloat(num('bio_bpd', ''));
+    const method = activeBioMethod();
     let gaDays = null;
-
-    // Later measurements take priority when more than one is filled in, since
-    // that's the one actually usable at this stage of the pregnancy.
-    if (!isNaN(bpd) && bpd > 0) {
-      gaDays = gestAgeDaysFromBPD(bpd);
-    } else if (!isNaN(crl) && crl > 0) {
-      gaDays = gestAgeDaysFromCRL(crl);
-    } else if (!isNaN(gs) && gs > 0) {
-      gaDays = gestAgeDaysFromGS(gs);
+    if (method === 'bpd') {
+      const bpd = parseFloat(num('bio_bpd', ''));
+      if (!isNaN(bpd) && bpd > 0) gaDays = gestAgeDaysFromBPD(bpd);
+    } else if (method === 'crl') {
+      const crl = parseFloat(num('bio_crl', ''));
+      if (!isNaN(crl) && crl > 0) gaDays = gestAgeDaysFromCRL(crl);
+    } else if (method === 'gs') {
+      const gs = parseFloat(num('bio_gs', ''));
+      if (!isNaN(gs) && gs > 0) gaDays = gestAgeDaysFromGS(gs);
     }
     if (gaDays === null || isNaN(gaDays)) return;
 
@@ -202,10 +211,28 @@
     });
   });
 
+  // Only one biometry measurement is usable at a time, matching the old system —
+  // selecting a method enables its field and disables the other two.
+  const bioInputs = { gs: form.querySelector('[name="bio_gs"]'), crl: form.querySelector('[name="bio_crl"]'), bpd: form.querySelector('[name="bio_bpd"]') };
+  function applyBioMethodState() {
+    const method = activeBioMethod();
+    Object.keys(bioInputs).forEach((key) => {
+      const input = bioInputs[key];
+      if (!input) return;
+      input.disabled = key !== method;
+    });
+  }
+  form.querySelectorAll('[name="bio_method"]').forEach((radio) => {
+    radio.addEventListener('change', () => { applyBioMethodState(); genBiometry(); calcEDD(); });
+  });
+  applyBioMethodState(); // set correct enabled/disabled state on page load (including when editing)
+
   // Auto-calculate EDD only when the measurements that drive it change —
   // never on the EDD field itself, so a manual edit is never clobbered.
   const crlInput = form.querySelector('[name="bio_crl"]');
   const gsInput = form.querySelector('[name="bio_gs"]');
+  const bpdInput = form.querySelector('[name="bio_bpd"]');
   if (crlInput) crlInput.addEventListener('change', calcEDD);
   if (gsInput) gsInput.addEventListener('change', calcEDD);
+  if (bpdInput) bpdInput.addEventListener('change', calcEDD);
 })();
