@@ -3,7 +3,6 @@ const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
-const QRCode = require('qrcode');
 const path = require('path');
 const { db } = require('./db/db');
 
@@ -33,7 +32,10 @@ app.use((req, res, next) => {
     if (!d) return '—';
     const dt = new Date(d);
     if (isNaN(dt)) return d;
-    return dt.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    const day = dt.getDate();
+    const month = dt.toLocaleString('en-US', { month: 'short' });
+    const year = String(dt.getFullYear()).slice(-2);
+    return `${day}-${month}-${year}`;
   };
   // SQLite's datetime('now') returns "YYYY-MM-DD HH:MM:SS" (UTC, no timezone marker),
   // which JS can parse inconsistently — normalize it to a real ISO string first.
@@ -69,12 +71,6 @@ function genToken() {
   return crypto.randomBytes(12).toString('hex'); // 24-char unguessable token
 }
 
-// Builds the public share URL + a QR code (data URL) for a given report.
-async function buildShare(req, kind, token) {
-  const shareUrl = `${req.protocol}://${req.get('host')}/share/${kind}/${token}`;
-  const qrDataUrl = await QRCode.toDataURL(shareUrl, { margin: 1, width: 180, color: { dark: '#0E2A30', light: '#FFFFFF' } });
-  return { shareUrl, qrDataUrl };
-}
 
 /* ---------------- AUTH ---------------- */
 app.get('/login', (req, res) => {
@@ -280,20 +276,14 @@ app.post('/reports/male/:id/edit', requireAuth, (req, res) => {
   res.redirect(`/reports/male/${req.params.id}/print`);
 });
 
-app.get('/reports/male/:id/print', requireAuth, async (req, res) => {
+app.get('/reports/male/:id/print', requireAuth, (req, res) => {
   let report = db.prepare('SELECT * FROM male_reports WHERE id = ?').get(req.params.id);
   if (!report) return res.status(404).send('Report not found.');
-  if (!report.share_token) {
-    const token = genToken();
-    db.prepare('UPDATE male_reports SET share_token = ? WHERE id = ?').run(token, report.id);
-    report = { ...report, share_token: token };
-  }
   const patient = db.prepare(`
     SELECT p.*, d.name AS ref_doctor_name FROM patients p
     LEFT JOIN doctors d ON d.id = p.ref_doctor_id WHERE p.id = ?
   `).get(report.patient_id);
-  const { shareUrl, qrDataUrl } = await buildShare(req, 'male', report.share_token);
-  res.render('report-print', { report, patient, type: 'Abdominal / Male Ultrasound', editUrl: `/reports/male/${report.id}/edit`, shareUrl, qrDataUrl });
+  res.render('report-print', { report, patient, type: 'Abdominal / Male Ultrasound', editUrl: `/reports/male/${report.id}/edit` });
 });
 
 /* ---------------- GYNAE REPORT ---------------- */
@@ -338,20 +328,14 @@ app.post('/reports/gynae/:id/edit', requireAuth, (req, res) => {
   res.redirect(`/reports/gynae/${req.params.id}/print`);
 });
 
-app.get('/reports/gynae/:id/print', requireAuth, async (req, res) => {
+app.get('/reports/gynae/:id/print', requireAuth, (req, res) => {
   let report = db.prepare('SELECT * FROM gynae_reports WHERE id = ?').get(req.params.id);
   if (!report) return res.status(404).send('Report not found.');
-  if (!report.share_token) {
-    const token = genToken();
-    db.prepare('UPDATE gynae_reports SET share_token = ? WHERE id = ?').run(token, report.id);
-    report = { ...report, share_token: token };
-  }
   const patient = db.prepare(`
     SELECT p.*, d.name AS ref_doctor_name FROM patients p
     LEFT JOIN doctors d ON d.id = p.ref_doctor_id WHERE p.id = ?
   `).get(report.patient_id);
-  const { shareUrl, qrDataUrl } = await buildShare(req, 'gynae', report.share_token);
-  res.render('report-print', { report, patient, type: 'Gynaecological Ultrasound', editUrl: `/reports/gynae/${report.id}/edit`, shareUrl, qrDataUrl });
+  res.render('report-print', { report, patient, type: 'Gynaecological Ultrasound', editUrl: `/reports/gynae/${report.id}/edit` });
 });
 
 /* ---------------- OBSTETRIC REPORT ---------------- */
@@ -396,25 +380,17 @@ app.post('/reports/obs/:id/edit', requireAuth, (req, res) => {
   res.redirect(`/reports/obs/${req.params.id}/print`);
 });
 
-app.get('/reports/obs/:id/print', requireAuth, async (req, res) => {
+app.get('/reports/obs/:id/print', requireAuth, (req, res) => {
   let report = db.prepare('SELECT * FROM obs_reports WHERE id = ?').get(req.params.id);
   if (!report) return res.status(404).send('Report not found.');
-  if (!report.share_token) {
-    const token = genToken();
-    db.prepare('UPDATE obs_reports SET share_token = ? WHERE id = ?').run(token, report.id);
-    report = { ...report, share_token: token };
-  }
   const patient = db.prepare(`
     SELECT p.*, d.name AS ref_doctor_name FROM patients p
     LEFT JOIN doctors d ON d.id = p.ref_doctor_id WHERE p.id = ?
   `).get(report.patient_id);
-  const { shareUrl, qrDataUrl } = await buildShare(req, 'obs', report.share_token);
-  res.render('report-print', { report, patient, type: 'Obstetric Ultrasound', editUrl: `/reports/obs/${report.id}/edit`, shareUrl, qrDataUrl });
+  res.render('report-print', { report, patient, type: 'Obstetric Ultrasound', editUrl: `/reports/obs/${report.id}/edit` });
 });
 
 /* ---------------- PUBLIC SHARE VIEWS (no login required) ---------------- */
-// Each report has its own unguessable token, so scanning a QR code only ever
-// exposes that one report — never the rest of the patient list.
 const SHARE_CONFIG = {
   male:  { table: 'male_reports',  type: 'Abdominal / Male Ultrasound' },
   gynae: { table: 'gynae_reports', type: 'Gynaecological Ultrasound' },
