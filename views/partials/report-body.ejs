@@ -4,7 +4,7 @@
     <div class="rp-letterhead-text">
       <div class="rp-clinic-name">Ali Hospital &amp; UltraSound Centre</div>
       <div class="rp-clinic-addr">Thana Road Kot Addu.</div>
-      <div class="rp-clinic-phone">Phone: Off: 066-2242338<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Res: 066-2241258</div>
+      <div class="rp-clinic-phone">Phone: Off: 066-2242338 &nbsp;&nbsp;&nbsp;&nbsp; Res: 066-2241258</div>
     </div>
   </div>
 
@@ -17,8 +17,8 @@
       <span><b>Age:</b> <%= patient.age %></span>
     </div>
     <div class="rp-demo-row">
-      <span><b>Sex:</b> <%= patient.sex %></span>
       <span><b>Date:</b> <%= fmtDate(patient.exam_date) %></span>
+      <span><b>Sex:</b> <%= patient.sex %></span>
       <span><b>Referred By:</b> <%= patient.ref_doctor_name || 'Self' %></span>
     </div>
   </div>
