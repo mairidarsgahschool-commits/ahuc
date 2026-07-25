@@ -33,6 +33,13 @@
     <h5>Drainage</h5>
     <div class="radio-row"><input type="radio" name="<%= prefix %>_hydro" value="no" checked> <label>No hydronephrosis</label></div>
     <div class="radio-row"><input type="radio" name="<%= prefix %>_hydro" value="yes"> <label>Hydronephrosis present</label></div>
+    <div class="sub-inputs">
+      <select name="<%= prefix %>_hydro_severity">
+        <option value="mild">mild</option>
+        <option value="mildmod">mild to moderate</option>
+        <option value="severe">severe</option>
+      </select>
+    </div>
     <div class="radio-row" style="margin-top:6px;"><input type="radio" name="<%= prefix %>_ureter" value="normal" checked> <label>Ureter normal</label></div>
     <div class="radio-row"><input type="radio" name="<%= prefix %>_ureter" value="dilated"> <label>Ureter dilated</label></div>
     <div class="radio-row" style="margin-top:6px;"><input type="radio" name="<%= prefix %>_puj" value="normal" checked> <label>P.U.J normal</label></div>

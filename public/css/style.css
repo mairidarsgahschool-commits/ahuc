@@ -172,14 +172,13 @@ tr:hover td{background:#FAFCFB;}
 .report-doc{
   background:#fff; border:1px solid var(--line);
   width:210mm; min-height:297mm; max-width:none;
-  padding:12mm 12mm 15mm 20mm; margin:0 auto;
+  padding:18mm 16mm; margin:0 auto;
   box-shadow:0 8px 24px -14px rgba(14,42,48,0.2);
   box-sizing:border-box;
   font-family:'Georgia', 'Times New Roman', serif; color:#1a1a1a;
   display:flex; flex-direction:column;
 }
 .rp-letterhead{display:flex; justify-content:space-between; align-items:flex-start; gap:16px;}
-.rp-letterhead-text{text-align:left; margin-left:0;}
 .rp-clinic-name{font-family:'Fraunces',serif; font-weight:600; font-size:26px; color:#111;}
 .rp-clinic-addr{font-size:15px; font-style:italic; color:#333; margin-top:3px;}
 .rp-clinic-phone{font-size:13.5px; color:#333; margin-top:8px; line-height:1.6;}
@@ -188,22 +187,31 @@ tr:hover td{background:#FAFCFB;}
 .rp-rule-footer{border-top:1px solid #ccc; margin-top:0;}
 
 .rp-demo{margin-bottom:0;}
-.rp-demo-table{width:100%; border-collapse:collapse; font-size:14px; color:#1a1a1a; line-height:1.5;}
-.rp-demo-table td{padding:3px 6px; vertical-align:top;}
-.rp-demo-table td b{font-weight:700; color:#111; padding-right:4px;}
+.rp-demo-row{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:9px; font-size:15px; color:#1a1a1a;}
+.rp-demo-row b{font-weight:700;}
 
 .rp-content{flex:1 0 auto;}
-.rp-row{display:flex; gap:14px; margin-bottom:20px; font-size:16px; line-height:1.55;}
+.rp-row{display:flex; gap:18px; margin-bottom:26px; font-size:17px; line-height:1.65;}
 .rp-row-label{flex:0 0 150px; font-weight:700; color:#111;}
 .rp-row-val{flex:1; color:#1a1a1a; white-space:pre-wrap;}
 
+/* QR sits at the bottom of the page, above the sign-off footer */
+.rp-qr-block{margin-top:auto; padding-top:16px; display:flex; justify-content:center;}
+.rp-qr{display:flex; flex-direction:column; align-items:center; gap:5px;}
+.rp-qr img{display:block; border:1px solid var(--line); border-radius:3px; width:56px; height:56px;}
+.rp-qr span{font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text-soft); text-transform:uppercase; letter-spacing:.03em; text-align:center;}
 
 .rp-footer-block{margin-top:16px;}
 .rp-footer{display:grid; grid-template-columns:1fr 1fr 1fr; align-items:baseline; margin-top:14px; font-size:13px; color:#333;}
 .rp-footer-date{font-style:italic; text-align:left;}
-.rp-footer-doctor{font-family:'Fraunces',serif; font-weight:600; font-style:italic; font-size:12.5px; color:#111; text-align:center;}
+.rp-footer-doctor{font-family:'Fraunces',serif; font-weight:600; font-style:italic; font-size:15px; color:#111; text-align:center;}
 .rp-footer-time{font-style:italic; text-align:right;}
 
+/* ---- share link box (below the printable report, screen only) ---- */
+.share-box{width:210mm; max-width:none; margin:16px auto 0; background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:16px 20px; box-sizing:border-box;}
+.share-box-label{font-size:12.5px; color:var(--text-soft); margin-bottom:10px;}
+.share-box-row{display:flex; gap:10px;}
+.share-box-row input{flex:1; font-family:'JetBrains Mono',monospace; font-size:12.5px; padding:8px 10px; border:1px solid var(--line); border-radius:4px; background:#FBFCFB; color:var(--text);}
 
 /* ---- standalone public share page ---- */
 .share-page{max-width:none; width:210mm; margin:0 auto; padding:12mm 0 40px; box-sizing:border-box;}
@@ -309,5 +317,15 @@ tr:hover td{background:#FAFCFB;}
   body{background:#fff;}
   .app-main{padding:0; max-width:none;}
   .report-page-wrap{overflow:visible; padding:0;}
-  .report-doc{box-shadow:none; border:none; margin:0; width:auto; min-height:297mm;}
+  .report-doc{box-shadow:none; border:none; margin:0; width:auto; min-height:297mm; padding:12mm 14mm;}
+
+  /* Tighter spacing than the on-screen view so a full report fits one page */
+  .rp-clinic-name{font-size:21px;}
+  .rp-clinic-addr{font-size:12.5px;}
+  .rp-clinic-phone{font-size:11px; margin-top:5px;}
+  .rp-demo-row{font-size:12px; margin-bottom:5px;}
+  .rp-row{font-size:12.5px; line-height:1.42; margin-bottom:13px; gap:14px;}
+  .rp-row-label{flex:0 0 125px;}
+  .rp-footer{font-size:10.5px;}
+  .rp-footer-doctor{font-size:12.5px;}
 }

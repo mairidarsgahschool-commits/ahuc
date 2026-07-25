@@ -162,8 +162,13 @@
       sentences.push(`A simple cortical cyst is noted in the ${selVal(prefix + '_cyst_pole')}, measuring ${num(prefix + '_cyst_size', 0)} mm.`);
     }
 
-    if (val(`${prefix}_hydro`) === 'no') sentences.push('No sign of obstruction / hydronephrosis.');
-    else sentences.push('Hydronephrosis is present.');
+    if (val(`${prefix}_hydro`) === 'no') {
+      sentences.push('No sign of obstruction / hydronephrosis.');
+    } else {
+      const severity = selVal(`${prefix}_hydro_severity`);
+      const severityWord = severity === 'mildmod' ? 'mild to moderate' : (severity || 'mild');
+      sentences.push(`Hydronephrosis is present, ${severityWord} in severity.`);
+    }
 
     const ureter = val(`${prefix}_ureter`), puj = val(`${prefix}_puj`);
     if (ureter === 'dilated') sentences.push('Ureter is dilated.');

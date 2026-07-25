@@ -4,25 +4,23 @@
     <div class="rp-letterhead-text">
       <div class="rp-clinic-name">Ali Hospital &amp; UltraSound Centre</div>
       <div class="rp-clinic-addr">Thana Road Kot Addu.</div>
-      <div class="rp-clinic-phone">Phone: Off: 066-2242338 Res: 066-2241258</div>
+      <div class="rp-clinic-phone">Phone: Off: 066-2242338<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Res: 066-2241258</div>
     </div>
   </div>
 
   <hr class="rp-rule">
 
   <div class="rp-demo">
-    <table class="rp-demo-table">
-      <tr>
-        <td><b>Id:</b></td><td><%= patient.id %></td>
-        <td><b>Name:</b></td><td><%= patient.name %></td>
-        <td><b>Age:</b></td><td><%= patient.age %></td>
-      </tr>
-      <tr>
-        <td><b>Date:</b></td><td><%= fmtDate(patient.exam_date) %></td>
-        <td><b>Sex:</b></td><td><%= patient.sex %></td>
-        <td><b>Referred By:</b></td><td><%= patient.ref_doctor_name || 'Self' %></td>
-      </tr>
-    </table>
+    <div class="rp-demo-row">
+      <span><b>Id:</b> <%= patient.id %></span>
+      <span><b>Name:</b> <%= patient.name %></span>
+      <span><b>Age:</b> <%= patient.age %></span>
+    </div>
+    <div class="rp-demo-row">
+      <span><b>Sex:</b> <%= patient.sex %></span>
+      <span><b>Date:</b> <%= fmtDate(patient.exam_date) %></span>
+      <span><b>Referred By:</b> <%= patient.ref_doctor_name || 'Self' %></span>
+    </div>
   </div>
 
   <hr class="rp-rule">
@@ -65,6 +63,14 @@
   <div class="rp-row"><span class="rp-row-label">Remarks:</span><span class="rp-row-val"><%= report.remarks %></span></div>
   </div>
 
+  <% if (typeof showQr !== 'undefined' && showQr && typeof qrDataUrl !== 'undefined' && qrDataUrl) { %>
+  <div class="rp-qr-block">
+    <div class="rp-qr">
+      <img src="<%= qrDataUrl %>" alt="Scan to view this report online" width="56" height="56">
+      <span>Scan to view online</span>
+    </div>
+  </div>
+  <% } %>
 
   <div class="rp-footer-block">
     <hr class="rp-rule rp-rule-footer">
