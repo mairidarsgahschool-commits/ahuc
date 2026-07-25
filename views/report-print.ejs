@@ -9,17 +9,7 @@
 </div>
 
 <div class="report-page-wrap">
-  <%- include('partials/report-body', { report, patient, type, qrDataUrl, showQr }) %>
+  <%- include('partials/report-body', { report, patient, type }) %>
 </div>
-
-<% if (showQr) { %>
-<div class="share-box no-print">
-  <div class="share-box-label">Public view link (no login needed) — this QR code is printed on the report above</div>
-  <div class="share-box-row">
-    <input type="text" readonly value="<%= shareUrl %>" id="shareUrlInput" onclick="this.select()">
-    <button type="button" class="btn btn-outline btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('shareUrlInput').value); this.textContent='Copied!'; setTimeout(() => this.textContent='Copy link', 1500);">Copy link</button>
-  </div>
-</div>
-<% } %>
 
 <%- include('partials/footer') %>
